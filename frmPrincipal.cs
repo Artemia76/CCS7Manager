@@ -64,8 +64,12 @@ namespace CCS7Manager
             RT3S
         }
 
+        // String container for JSON File
         private string CCS7UserList;
 
+        /// <summary>
+        /// Constructor for main window
+        /// </summary>
         public frmPrincipal()
         {
             InitializeComponent();
@@ -80,16 +84,16 @@ namespace CCS7Manager
             // On vérifie des les données de taille et de position de la fenêtre ne sont pas vides
             // Et qu'elles sont toujours valides avec la configuration d'écran actuelle
             // Ceci pour éviter une fenêtre en dehors des limites
-            if (Properties.Settings.Default.WindowPosition != Rectangle.Empty &&
-                IsVisibleOnAnyScreen(Properties.Settings.Default.WindowPosition))
+            if (Settings.Default.WindowPosition != Rectangle.Empty &&
+                IsVisibleOnAnyScreen(Settings.Default.WindowPosition))
             {
                 // Définition de la position et de la taille de la fenêtre
                 StartPosition = FormStartPosition.Manual;
-                DesktopBounds = Properties.Settings.Default.WindowPosition;
+                DesktopBounds = Settings.Default.WindowPosition;
 
                 // Définition de l'état de la fenêtre pour être maximisée
                 // ou réduite selon la sauvegarde
-                WindowState = Properties.Settings.Default.WindowState;
+                WindowState = Settings.Default.WindowState;
             }
             else
             {
@@ -98,14 +102,25 @@ namespace CCS7Manager
 
                 // Nous pouvons alors définir la taille enrégistrée si celle ci 
                 // Existe
-                if (Properties.Settings.Default.WindowPosition != Rectangle.Empty)
+                if (Settings.Default.WindowPosition != Rectangle.Empty)
                 {
-                    Size = Properties.Settings.Default.WindowPosition.Size;
+                    Size = Settings.Default.WindowPosition.Size;
                 }
             }
+            if (Settings.Default.OutputFolder.Length == 0)
+            {
+                Settings.Default.OutputFolder = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
+                Settings.Default.Save();
+
+            }
+            tb_OutputFolder.Text = Settings.Default.OutputFolder;
             windowInitialized = true;
         }
 
+        /// <summary>
+        /// Check if another instance of this application is already launched
+        /// </summary>
+        /// <returns></returns>
         public bool SetAllowUnsafeHeaderParsing20()
         {
             //Get the assembly that contains the internal class
@@ -137,10 +152,10 @@ namespace CCS7Manager
         }
 
         /// <summary>
-        /// S'assure que le rectangle est visible sur le ou les écrans
+        /// Check if this application is visible on all screen of the desktop
         /// </summary>
-        /// <param name="rect">Rect représente la surface à tester</param>
-        /// <returns>Retourne vrai si le rectangle est entierement visible</returns>
+        /// <param name="rect">Area to test</param>
+        /// <returns>true if visible on all area surface</returns>
         private bool IsVisibleOnAnyScreen(Rectangle rect)
         {
             foreach (Screen screen in Screen.AllScreens)
@@ -155,7 +170,7 @@ namespace CCS7Manager
         }
 
         /// <summary>
-        /// Evénement sur la fermeture de l'application
+        /// Event once window is closed
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -165,8 +180,7 @@ namespace CCS7Manager
         }
 
         /// <summary>
-        /// Gestion d'un événement de redimensionnement
-        /// De la fenêtre
+        /// Event on resize the current window
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -176,8 +190,7 @@ namespace CCS7Manager
         }
 
         /// <summary>
-        /// Gestion d'un évenement de déplacement de
-        /// la fenêtre
+        /// Event on move the current window
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -187,8 +200,7 @@ namespace CCS7Manager
         }
 
         /// <summary>
-        /// Méthode pour suivre les modification de la géométrie et 
-        /// de la position de la fenêtre
+        /// Save the last known window state
         /// </summary>
         private void TrackWindowState()
         {
@@ -206,7 +218,7 @@ namespace CCS7Manager
         }
 
         /// <summary>
-        /// Closing application
+        /// Closing application event
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -233,225 +245,228 @@ namespace CCS7Manager
         /// <param name="e"></param>
         private void FrmPrincipal_Load(object sender, EventArgs e)
         {
-          this.loadCountries();
+          InitContent();
         }
     
         /// <summary>
-        /// Populate CheckBox Lists
+        /// Init all contenair on main window
         /// </summary>
-        private void loadCountries()
+        private void InitContent()
         {
-          // Populate Countries Check Box List
-          this.chkBoxCountries.Items.Add((object) "Afghanistan");
-          this.chkBoxCountries.Items.Add((object) "Albania");
-          this.chkBoxCountries.Items.Add((object) "Algeria");
-          this.chkBoxCountries.Items.Add((object) "American Samoa");
-          this.chkBoxCountries.Items.Add((object) "Andorra");
-          this.chkBoxCountries.Items.Add((object) "Angola");
-          this.chkBoxCountries.Items.Add((object) "Anguilla");
-          this.chkBoxCountries.Items.Add((object) "Antigua and Barbuda");
-          this.chkBoxCountries.Items.Add((object) "Argentina Republic");
-          this.chkBoxCountries.Items.Add((object) "Armenia");
-          this.chkBoxCountries.Items.Add((object) "Aruba");
-          this.chkBoxCountries.Items.Add((object) "Australia");
-          this.chkBoxCountries.Items.Add((object) "Austria");
-          this.chkBoxCountries.Items.Add((object) "Azerbaijan");
-          this.chkBoxCountries.Items.Add((object) "Bahamas");
-          this.chkBoxCountries.Items.Add((object) "Bahrain");
-          this.chkBoxCountries.Items.Add((object) "Bangladesh");
-          this.chkBoxCountries.Items.Add((object) "Barbados");
-          this.chkBoxCountries.Items.Add((object) "Belarus");
-          this.chkBoxCountries.Items.Add((object) "Belgium");
-          this.chkBoxCountries.Items.Add((object) "Belize");
-          this.chkBoxCountries.Items.Add((object) "Benin");
-          this.chkBoxCountries.Items.Add((object) "Bermuda");
-          this.chkBoxCountries.Items.Add((object) "Bhutan");
-          this.chkBoxCountries.Items.Add((object) "Bolivia");
-          this.chkBoxCountries.Items.Add((object) "Bosnia And Herzegovin");
-          this.chkBoxCountries.Items.Add((object) "Botswana");
-          this.chkBoxCountries.Items.Add((object) "Brazil");
-          this.chkBoxCountries.Items.Add((object) "British Virgin Islands");
-          this.chkBoxCountries.Items.Add((object) "Brunei Darussalam");
-          this.chkBoxCountries.Items.Add((object) "Bulgaria");
-          this.chkBoxCountries.Items.Add((object) "Burkina Faso");
-          this.chkBoxCountries.Items.Add((object) "Burma");
-          this.chkBoxCountries.Items.Add((object) "Burundi");
-          this.chkBoxCountries.Items.Add((object) "Cambodia");
-          this.chkBoxCountries.Items.Add((object) "Canada");
-          this.chkBoxCountries.Items.Add((object) "Cayman Islands");
-          this.chkBoxCountries.Items.Add((object) "Chile");
-          this.chkBoxCountries.Items.Add((object) "China");
-          this.chkBoxCountries.Items.Add((object) "Columbia");
-          this.chkBoxCountries.Items.Add((object) "Comoros");
-          this.chkBoxCountries.Items.Add((object) "Congo, Dem. Rep.");
-          this.chkBoxCountries.Items.Add((object) "Cook Islands");
-          this.chkBoxCountries.Items.Add((object) "Corsica");
-          this.chkBoxCountries.Items.Add((object) "Costa Rica");
-          this.chkBoxCountries.Items.Add((object) "Croatia");
-          this.chkBoxCountries.Items.Add((object) "Cuba");
-          this.chkBoxCountries.Items.Add((object) "Cyprus");
-          this.chkBoxCountries.Items.Add((object) "Czech Republic");
-          this.chkBoxCountries.Items.Add((object) "Denmark");
-          this.chkBoxCountries.Items.Add((object) "Djibouti");
-          this.chkBoxCountries.Items.Add((object) "Dominica");
-          this.chkBoxCountries.Items.Add((object) "Dominican Republic");
-          this.chkBoxCountries.Items.Add((object) "Ecuador");
-          this.chkBoxCountries.Items.Add((object) "Egypt");
-          this.chkBoxCountries.Items.Add((object) "El Salvador");
-          this.chkBoxCountries.Items.Add((object) "Eritrea");
-          this.chkBoxCountries.Items.Add((object) "Estonia");
-          this.chkBoxCountries.Items.Add((object) "Ethiopia");
-          this.chkBoxCountries.Items.Add((object) "Faroe Islands");
-          this.chkBoxCountries.Items.Add((object) "Fiji");
-          this.chkBoxCountries.Items.Add((object) "Finland");
-          this.chkBoxCountries.Items.Add((object) "France");
-          this.chkBoxCountries.Items.Add((object) "French Guiana");
-          this.chkBoxCountries.Items.Add((object) "French Polynesia");
-          this.chkBoxCountries.Items.Add((object) "Gambia");
-          this.chkBoxCountries.Items.Add((object) "Georgia");
-          this.chkBoxCountries.Items.Add((object) "Germany");
-          this.chkBoxCountries.Items.Add((object) "Gibraltar");
-          this.chkBoxCountries.Items.Add((object) "Greece");
-          this.chkBoxCountries.Items.Add((object) "Greenland");
-          this.chkBoxCountries.Items.Add((object) "Grenada");
-          this.chkBoxCountries.Items.Add((object) "Guam");
-          this.chkBoxCountries.Items.Add((object) "Guatemala");
-          this.chkBoxCountries.Items.Add((object) "Guinea");
-          this.chkBoxCountries.Items.Add((object) "Guinea-Bissau");
-          this.chkBoxCountries.Items.Add((object) "Guyana");
-          this.chkBoxCountries.Items.Add((object) "Haiti");
-          this.chkBoxCountries.Items.Add((object) "Honduras");
-          this.chkBoxCountries.Items.Add((object) "Hong Kong");
-          this.chkBoxCountries.Items.Add((object) "Hungary");
-          this.chkBoxCountries.Items.Add((object) "Iceland");
-          this.chkBoxCountries.Items.Add((object) "India");
-          this.chkBoxCountries.Items.Add((object) "Indonesia");
-          this.chkBoxCountries.Items.Add((object) "Iran");
-          this.chkBoxCountries.Items.Add((object) "Iraq");
-          this.chkBoxCountries.Items.Add((object) "Ireland");
-          this.chkBoxCountries.Items.Add((object) "Israel");
-          this.chkBoxCountries.Items.Add((object) "Italy");
-          this.chkBoxCountries.Items.Add((object) "Ivory Coast");
-          this.chkBoxCountries.Items.Add((object) "Jamaica");
-          this.chkBoxCountries.Items.Add((object) "Japan");
-          this.chkBoxCountries.Items.Add((object) "Jordan");
-          this.chkBoxCountries.Items.Add((object) "Kazakhstan");
-          this.chkBoxCountries.Items.Add((object) "Kenya");
-          this.chkBoxCountries.Items.Add((object) "Kiribati");
-          this.chkBoxCountries.Items.Add((object) "Korea S, Republic of");
-          this.chkBoxCountries.Items.Add((object) "Kuwait");
-          this.chkBoxCountries.Items.Add((object) "Kyrgyzstan");
-          this.chkBoxCountries.Items.Add((object) "Laos P.D.R.");
-          this.chkBoxCountries.Items.Add((object) "Latvia");
-          this.chkBoxCountries.Items.Add((object) "Lebanon");
-          this.chkBoxCountries.Items.Add((object) "Lesotho");
-          this.chkBoxCountries.Items.Add((object) "Liberia");
-          this.chkBoxCountries.Items.Add((object) "Libya");
-          this.chkBoxCountries.Items.Add((object) "Liechtenstein");
-          this.chkBoxCountries.Items.Add((object) "Lithuania");
-          this.chkBoxCountries.Items.Add((object) "Luxembourg");
-          this.chkBoxCountries.Items.Add((object) "Macao, China");
-          this.chkBoxCountries.Items.Add((object) "Macedonia");
-          this.chkBoxCountries.Items.Add((object) "Madagascar");
-          this.chkBoxCountries.Items.Add((object) "Malawi");
-          this.chkBoxCountries.Items.Add((object) "Malaysia");
-          this.chkBoxCountries.Items.Add((object) "Maldives");
-          this.chkBoxCountries.Items.Add((object) "Mali");
-          this.chkBoxCountries.Items.Add((object) "Malta");
-          this.chkBoxCountries.Items.Add((object) "Mauritania");
-          this.chkBoxCountries.Items.Add((object) "Mauritius");
-          this.chkBoxCountries.Items.Add((object) "Mexico");
-          this.chkBoxCountries.Items.Add((object) "Micronesia");
-          this.chkBoxCountries.Items.Add((object) "Moldova");
-          this.chkBoxCountries.Items.Add((object) "Monaco");
-          this.chkBoxCountries.Items.Add((object) "Mongolia");
-          this.chkBoxCountries.Items.Add((object) "Montenegro");
-          this.chkBoxCountries.Items.Add((object) "Montserrat");
-          this.chkBoxCountries.Items.Add((object) "Morocco");
-          this.chkBoxCountries.Items.Add((object) "Mozambique");
-          this.chkBoxCountries.Items.Add((object) "Namibia");
-          this.chkBoxCountries.Items.Add((object) "Nepal");
-          this.chkBoxCountries.Items.Add((object) "Netherlands");
-          this.chkBoxCountries.Items.Add((object) "Netherlands Antilles");
-          this.chkBoxCountries.Items.Add((object) "New Caledonia");
-          this.chkBoxCountries.Items.Add((object) "New Zealand");
-          this.chkBoxCountries.Items.Add((object) "Nicaragua");
-          this.chkBoxCountries.Items.Add((object) "Niger");
-          this.chkBoxCountries.Items.Add((object) "Norway");
-          this.chkBoxCountries.Items.Add((object) "Oman");
-          this.chkBoxCountries.Items.Add((object) "Pakistan");
-          this.chkBoxCountries.Items.Add((object) "Panama");
-          this.chkBoxCountries.Items.Add((object) "Papua New Guinea");
-          this.chkBoxCountries.Items.Add((object) "Paraguay");
-          this.chkBoxCountries.Items.Add((object) "Peru");
-          this.chkBoxCountries.Items.Add((object) "Philippines");
-          this.chkBoxCountries.Items.Add((object) "Poland");
-          this.chkBoxCountries.Items.Add((object) "Portugal");
-          this.chkBoxCountries.Items.Add((object) "Puerto Rico");
-          this.chkBoxCountries.Items.Add((object) "Qatar");
-          this.chkBoxCountries.Items.Add((object) "Reunion");
-          this.chkBoxCountries.Items.Add((object) "Romania");
-          this.chkBoxCountries.Items.Add((object) "Russia");
-          this.chkBoxCountries.Items.Add((object) "Rwanda");
-          this.chkBoxCountries.Items.Add((object) "Saint Kitts and Nevis");
-          this.chkBoxCountries.Items.Add((object) "Saint Lucia");
-          this.chkBoxCountries.Items.Add((object) "San Marino");
-          this.chkBoxCountries.Items.Add((object) "Samoa");
-          this.chkBoxCountries.Items.Add((object) "Satellite Networks");
-          this.chkBoxCountries.Items.Add((object) "Saudi Arabia");
-          this.chkBoxCountries.Items.Add((object) "Senegal");
-          this.chkBoxCountries.Items.Add((object) "Serbia");
-          this.chkBoxCountries.Items.Add((object) "Seychelles");
-          this.chkBoxCountries.Items.Add((object) "Sierra Leone");
-          this.chkBoxCountries.Items.Add((object) "Singapore");
-          this.chkBoxCountries.Items.Add((object) "Slovakia");
-          this.chkBoxCountries.Items.Add((object) "Slovenia");
-          this.chkBoxCountries.Items.Add((object) "Solomon Islands");
-          this.chkBoxCountries.Items.Add((object) "Somalia");
-          this.chkBoxCountries.Items.Add((object) "South Africa");
-          this.chkBoxCountries.Items.Add((object) "Spain");
-          this.chkBoxCountries.Items.Add((object) "Sri Lanka");
-          this.chkBoxCountries.Items.Add((object) "St. Pierre and Miquelon");
-          this.chkBoxCountries.Items.Add((object) "St. Vincent and Gren.");
-          this.chkBoxCountries.Items.Add((object) "Sudan");
-          this.chkBoxCountries.Items.Add((object) "Suriname");
-          this.chkBoxCountries.Items.Add((object) "Swaziland");
-          this.chkBoxCountries.Items.Add((object) "Sweden");
-          this.chkBoxCountries.Items.Add((object) "Switzerland");
-          this.chkBoxCountries.Items.Add((object) "Syrian Arab Republic");
-          this.chkBoxCountries.Items.Add((object) "Taiwan");
-          this.chkBoxCountries.Items.Add((object) "Tajikistan");
-          this.chkBoxCountries.Items.Add((object) "Tanzania");
-          this.chkBoxCountries.Items.Add((object) "Thailand");
-          this.chkBoxCountries.Items.Add((object) "Timor-Leste");
-          this.chkBoxCountries.Items.Add((object) "Togo");
-          this.chkBoxCountries.Items.Add((object) "Tonga");
-          this.chkBoxCountries.Items.Add((object) "Trinidad and Tobago");
-          this.chkBoxCountries.Items.Add((object) "Tunisia");
-          this.chkBoxCountries.Items.Add((object) "Turkey");
-          this.chkBoxCountries.Items.Add((object) "Turkmenistan");
-          this.chkBoxCountries.Items.Add((object) "Uganda");
-          this.chkBoxCountries.Items.Add((object) "Ukraine");
-          this.chkBoxCountries.Items.Add((object) "United Arab Emirates");
-          this.chkBoxCountries.Items.Add((object) "United Kingdom");
-          this.chkBoxCountries.Items.Add((object) "United States");
-          this.chkBoxCountries.Items.Add((object) "Uruguay");
-          this.chkBoxCountries.Items.Add((object) "Uzbekistan");
-          this.chkBoxCountries.Items.Add((object) "Vanuatu");
-          this.chkBoxCountries.Items.Add((object) "Venezuela");
-          this.chkBoxCountries.Items.Add((object) "Viet Nam");
-          this.chkBoxCountries.Items.Add((object) "Virgin Islands, U.S.");
-          this.chkBoxCountries.Items.Add((object) "Yemen");
-          this.chkBoxCountries.Items.Add((object) "Zambia");
-          this.chkBoxCountries.Items.Add((object) "Zimbabwe");
+            // Populate Countries Check Box List
+            this.chkBoxCountries.Items.Add((object) "Afghanistan");
+            this.chkBoxCountries.Items.Add((object) "Albania");
+            this.chkBoxCountries.Items.Add((object) "Algeria");
+            this.chkBoxCountries.Items.Add((object) "American Samoa");
+            this.chkBoxCountries.Items.Add((object) "Andorra");
+            this.chkBoxCountries.Items.Add((object) "Angola");
+            this.chkBoxCountries.Items.Add((object) "Anguilla");
+            this.chkBoxCountries.Items.Add((object) "Antigua and Barbuda");
+            this.chkBoxCountries.Items.Add((object) "Argentina Republic");
+            this.chkBoxCountries.Items.Add((object) "Armenia");
+            this.chkBoxCountries.Items.Add((object) "Aruba");
+            this.chkBoxCountries.Items.Add((object) "Australia");
+            this.chkBoxCountries.Items.Add((object) "Austria");
+            this.chkBoxCountries.Items.Add((object) "Azerbaijan");
+            this.chkBoxCountries.Items.Add((object) "Bahamas");
+            this.chkBoxCountries.Items.Add((object) "Bahrain");
+            this.chkBoxCountries.Items.Add((object) "Bangladesh");
+            this.chkBoxCountries.Items.Add((object) "Barbados");
+            this.chkBoxCountries.Items.Add((object) "Belarus");
+            this.chkBoxCountries.Items.Add((object) "Belgium");
+            this.chkBoxCountries.Items.Add((object) "Belize");
+            this.chkBoxCountries.Items.Add((object) "Benin");
+            this.chkBoxCountries.Items.Add((object) "Bermuda");
+            this.chkBoxCountries.Items.Add((object) "Bhutan");
+            this.chkBoxCountries.Items.Add((object) "Bolivia");
+            this.chkBoxCountries.Items.Add((object) "Bosnia And Herzegovin");
+            this.chkBoxCountries.Items.Add((object) "Botswana");
+            this.chkBoxCountries.Items.Add((object) "Brazil");
+            this.chkBoxCountries.Items.Add((object) "British Virgin Islands");
+            this.chkBoxCountries.Items.Add((object) "Brunei Darussalam");
+            this.chkBoxCountries.Items.Add((object) "Bulgaria");
+            this.chkBoxCountries.Items.Add((object) "Burkina Faso");
+            this.chkBoxCountries.Items.Add((object) "Burma");
+            this.chkBoxCountries.Items.Add((object) "Burundi");
+            this.chkBoxCountries.Items.Add((object) "Cambodia");
+            this.chkBoxCountries.Items.Add((object) "Canada");
+            this.chkBoxCountries.Items.Add((object) "Cayman Islands");
+            this.chkBoxCountries.Items.Add((object) "Chile");
+            this.chkBoxCountries.Items.Add((object) "China");
+            this.chkBoxCountries.Items.Add((object) "Colombia");
+            this.chkBoxCountries.Items.Add((object) "Comoros");
+            this.chkBoxCountries.Items.Add((object) "Congo, Dem. Rep.");
+            this.chkBoxCountries.Items.Add((object) "Cook Islands");
+            this.chkBoxCountries.Items.Add((object) "Corse");
+            this.chkBoxCountries.Items.Add((object) "Costa Rica");
+            this.chkBoxCountries.Items.Add((object) "Croatia");
+            this.chkBoxCountries.Items.Add((object) "Cuba");
+            this.chkBoxCountries.Items.Add((object) "Cyprus");
+            this.chkBoxCountries.Items.Add((object) "Czech Republic");
+            this.chkBoxCountries.Items.Add((object) "Denmark");
+            this.chkBoxCountries.Items.Add((object) "Djibouti");
+            this.chkBoxCountries.Items.Add((object) "Dominica");
+            this.chkBoxCountries.Items.Add((object) "Dominican Republic");
+            this.chkBoxCountries.Items.Add((object) "Ecuador");
+            this.chkBoxCountries.Items.Add((object) "Egypt");
+            this.chkBoxCountries.Items.Add((object) "El Salvador");
+            this.chkBoxCountries.Items.Add((object) "Eritrea");
+            this.chkBoxCountries.Items.Add((object) "Estonia");
+            this.chkBoxCountries.Items.Add((object) "Ethiopia");
+            this.chkBoxCountries.Items.Add((object) "Faroe Islands");
+            this.chkBoxCountries.Items.Add((object) "Fiji");
+            this.chkBoxCountries.Items.Add((object) "Finland");
+            this.chkBoxCountries.Items.Add((object) "France");
+            this.chkBoxCountries.Items.Add((object) "French Guiana");
+            this.chkBoxCountries.Items.Add((object) "French Polynesia");
+            this.chkBoxCountries.Items.Add((object) "Gambia");
+            this.chkBoxCountries.Items.Add((object) "Georgia");
+            this.chkBoxCountries.Items.Add((object) "Germany");
+            this.chkBoxCountries.Items.Add((object) "Gibraltar");
+            this.chkBoxCountries.Items.Add((object) "Greece");
+            this.chkBoxCountries.Items.Add((object) "Greenland");
+            this.chkBoxCountries.Items.Add((object) "Grenada");
+            this.chkBoxCountries.Items.Add((object) "Guam");
+            this.chkBoxCountries.Items.Add((object) "Guatemala");
+            this.chkBoxCountries.Items.Add((object) "Guinea");
+            this.chkBoxCountries.Items.Add((object) "Guinea-Bissau");
+            this.chkBoxCountries.Items.Add((object) "Guyana");
+            this.chkBoxCountries.Items.Add((object) "Haiti");
+            this.chkBoxCountries.Items.Add((object) "Honduras");
+            this.chkBoxCountries.Items.Add((object) "Hong Kong");
+            this.chkBoxCountries.Items.Add((object) "Hungary");
+            this.chkBoxCountries.Items.Add((object) "Iceland");
+            this.chkBoxCountries.Items.Add((object) "India");
+            this.chkBoxCountries.Items.Add((object) "Indonesia");
+            this.chkBoxCountries.Items.Add((object) "Iran");
+            this.chkBoxCountries.Items.Add((object) "Iraq");
+            this.chkBoxCountries.Items.Add((object) "Ireland");
+            this.chkBoxCountries.Items.Add((object) "Israel");
+            this.chkBoxCountries.Items.Add((object) "Italy");
+            this.chkBoxCountries.Items.Add((object) "Ivory Coast");
+            this.chkBoxCountries.Items.Add((object) "Jamaica");
+            this.chkBoxCountries.Items.Add((object) "Japan");
+            this.chkBoxCountries.Items.Add((object) "Jordan");
+            this.chkBoxCountries.Items.Add((object) "Kazakhstan");
+            this.chkBoxCountries.Items.Add((object) "Kenya");
+            this.chkBoxCountries.Items.Add((object) "Kiribati");
+            this.chkBoxCountries.Items.Add((object) "Korea S, Republic of");
+            this.chkBoxCountries.Items.Add((object) "Kuwait");
+            this.chkBoxCountries.Items.Add((object) "Kyrgyzstan");
+            this.chkBoxCountries.Items.Add((object) "Laos P.D.R.");
+            this.chkBoxCountries.Items.Add((object) "Latvia");
+            this.chkBoxCountries.Items.Add((object) "Lebanon");
+            this.chkBoxCountries.Items.Add((object) "Lesotho");
+            this.chkBoxCountries.Items.Add((object) "Liberia");
+            this.chkBoxCountries.Items.Add((object) "Libya");
+            this.chkBoxCountries.Items.Add((object) "Liechtenstein");
+            this.chkBoxCountries.Items.Add((object) "Lithuania");
+            this.chkBoxCountries.Items.Add((object) "Luxembourg");
+            this.chkBoxCountries.Items.Add((object) "Macao, China");
+            this.chkBoxCountries.Items.Add((object) "Macedonia");
+            this.chkBoxCountries.Items.Add((object) "Madagascar");
+            this.chkBoxCountries.Items.Add((object) "Malawi");
+            this.chkBoxCountries.Items.Add((object) "Malaysia");
+            this.chkBoxCountries.Items.Add((object) "Maldives");
+            this.chkBoxCountries.Items.Add((object) "Mali");
+            this.chkBoxCountries.Items.Add((object) "Malta");
+            this.chkBoxCountries.Items.Add((object) "Mauritania");
+            this.chkBoxCountries.Items.Add((object) "Mauritius");
+            this.chkBoxCountries.Items.Add((object) "Mexico");
+            this.chkBoxCountries.Items.Add((object) "Micronesia");
+            this.chkBoxCountries.Items.Add((object) "Moldova");
+            this.chkBoxCountries.Items.Add((object) "Monaco");
+            this.chkBoxCountries.Items.Add((object) "Mongolia");
+            this.chkBoxCountries.Items.Add((object) "Montenegro");
+            this.chkBoxCountries.Items.Add((object) "Montserrat");
+            this.chkBoxCountries.Items.Add((object) "Morocco");
+            this.chkBoxCountries.Items.Add((object) "Mozambique");
+            this.chkBoxCountries.Items.Add((object) "Namibia");
+            this.chkBoxCountries.Items.Add((object) "Nepal");
+            this.chkBoxCountries.Items.Add((object) "Netherlands");
+            this.chkBoxCountries.Items.Add((object) "Netherlands Antilles");
+            this.chkBoxCountries.Items.Add((object) "New Caledonia");
+            this.chkBoxCountries.Items.Add((object) "New Zealand");
+            this.chkBoxCountries.Items.Add((object) "Nicaragua");
+            this.chkBoxCountries.Items.Add((object) "Niger");
+            this.chkBoxCountries.Items.Add((object) "Norway");
+            this.chkBoxCountries.Items.Add((object) "Oman");
+            this.chkBoxCountries.Items.Add((object) "Pakistan");
+            this.chkBoxCountries.Items.Add((object) "Panama");
+            this.chkBoxCountries.Items.Add((object) "Papua New Guinea");
+            this.chkBoxCountries.Items.Add((object) "Paraguay");
+            this.chkBoxCountries.Items.Add((object) "Peru");
+            this.chkBoxCountries.Items.Add((object) "Philippines");
+            this.chkBoxCountries.Items.Add((object) "Poland");
+            this.chkBoxCountries.Items.Add((object) "Portugal");
+            this.chkBoxCountries.Items.Add((object) "Puerto Rico");
+            this.chkBoxCountries.Items.Add((object) "Qatar");
+            this.chkBoxCountries.Items.Add((object) "Reunion");
+            this.chkBoxCountries.Items.Add((object) "Romania");
+            this.chkBoxCountries.Items.Add((object) "Russia");
+            this.chkBoxCountries.Items.Add((object) "Rwanda");
+            this.chkBoxCountries.Items.Add((object) "Saint Kitts and Nevis");
+            this.chkBoxCountries.Items.Add((object) "Saint Lucia");
+            this.chkBoxCountries.Items.Add((object) "San Marino");
+            this.chkBoxCountries.Items.Add((object) "Samoa");
+            this.chkBoxCountries.Items.Add((object) "Satellite Networks");
+            this.chkBoxCountries.Items.Add((object) "Saudi Arabia");
+            this.chkBoxCountries.Items.Add((object) "Senegal");
+            this.chkBoxCountries.Items.Add((object) "Serbia");
+            this.chkBoxCountries.Items.Add((object) "Seychelles");
+            this.chkBoxCountries.Items.Add((object) "Sierra Leone");
+            this.chkBoxCountries.Items.Add((object) "Singapore");
+            this.chkBoxCountries.Items.Add((object) "Slovakia");
+            this.chkBoxCountries.Items.Add((object) "Slovenia");
+            this.chkBoxCountries.Items.Add((object) "Solomon Islands");
+            this.chkBoxCountries.Items.Add((object) "Somalia");
+            this.chkBoxCountries.Items.Add((object) "South Africa");
+            this.chkBoxCountries.Items.Add((object) "Spain");
+            this.chkBoxCountries.Items.Add((object) "Sri Lanka");
+            this.chkBoxCountries.Items.Add((object) "St. Pierre and Miquelon");
+            this.chkBoxCountries.Items.Add((object) "St. Vincent and Gren.");
+            this.chkBoxCountries.Items.Add((object) "Sudan");
+            this.chkBoxCountries.Items.Add((object) "Suriname");
+            this.chkBoxCountries.Items.Add((object) "Swaziland");
+            this.chkBoxCountries.Items.Add((object) "Sweden");
+            this.chkBoxCountries.Items.Add((object) "Switzerland");
+            this.chkBoxCountries.Items.Add((object) "Syrian Arab Republic");
+            this.chkBoxCountries.Items.Add((object) "Taiwan");
+            this.chkBoxCountries.Items.Add((object) "Tajikistan");
+            this.chkBoxCountries.Items.Add((object) "Tanzania");
+            this.chkBoxCountries.Items.Add((object) "Thailand");
+            this.chkBoxCountries.Items.Add((object) "Timor-Leste");
+            this.chkBoxCountries.Items.Add((object) "Togo");
+            this.chkBoxCountries.Items.Add((object) "Tonga");
+            this.chkBoxCountries.Items.Add((object) "Trinidad and Tobago");
+            this.chkBoxCountries.Items.Add((object) "Tunisia");
+            this.chkBoxCountries.Items.Add((object) "Turkey");
+            this.chkBoxCountries.Items.Add((object) "Turkmenistan");
+            this.chkBoxCountries.Items.Add((object) "Uganda");
+            this.chkBoxCountries.Items.Add((object) "Ukraine");
+            this.chkBoxCountries.Items.Add((object) "United Arab Emirates");
+            this.chkBoxCountries.Items.Add((object) "United Kingdom");
+            this.chkBoxCountries.Items.Add((object) "United States");
+            this.chkBoxCountries.Items.Add((object) "Uruguay");
+            this.chkBoxCountries.Items.Add((object) "Uzbekistan");
+            this.chkBoxCountries.Items.Add((object) "Vanuatu");
+            this.chkBoxCountries.Items.Add((object) "Venezuela");
+            this.chkBoxCountries.Items.Add((object) "Viet Nam");
+            this.chkBoxCountries.Items.Add((object) "Virgin Islands, U.S.");
+            this.chkBoxCountries.Items.Add((object) "Yemen");
+            this.chkBoxCountries.Items.Add((object) "Zambia");
+            this.chkBoxCountries.Items.Add((object) "Zimbabwe");
 
-          // Populate Radio List ChecBox
-          this.chkListRadios.Items.Add((object)"Ailunce HD1");
-          this.chkListRadios.Items.Add((object)"Retevis RT52");
-          this.chkListRadios.Items.Add((object)"Retevis RT3S / RT90 / RT84 / RT82");
-          this.chkListRadios.Items.Add((object)"AnyTone");
-          this.chkListRadios.Items.Add((object)"Radioddity GD-77");
-          this.chkListRadios.Items.Add((object)"TYT MD-380 / MD-2017 / MD-9600");
+            // Populate Radio List ChecBox
+            this.chkListRadios.Items.Add((object)"Ailunce HD1");
+            this.chkListRadios.Items.Add((object)"Retevis RT52");
+            this.chkListRadios.Items.Add((object)"Retevis RT3S / RT90 / RT84 / RT82");
+            this.chkListRadios.Items.Add((object)"AnyTone");
+            this.chkListRadios.Items.Add((object)"Radioddity GD-77");
+            this.chkListRadios.Items.Add((object)"TYT MD-380 / MD-2017 / MD-9600");
+
+            //Load the cached JSON File if exist
+            LoadJSON(true);
         }
     
         /// <summary>
@@ -481,6 +496,11 @@ namespace CCS7Manager
             }
         }
 
+        /// <summary>
+        /// The JSON File as been downloaded or aborted
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void WebClient_DownloadStringCompleted(object sender, DownloadStringCompletedEventArgs e)
         {
             if (!e.Cancelled && e.Error == null)
@@ -488,8 +508,9 @@ namespace CCS7Manager
                 CCS7UserList = (string)e.Result;
                 if (ReadCCS7UserList())
                 {
-                    tsState.Text = "DOWNLOAD COMPLETED - SELECT COUNTRY AND RADIOS";
-                    btnSaveJSON.Enabled = true;
+                    tsState.Text = "DOWNLOAD COMPLETED";
+                    lblVersionDate.Text = "Version Date : " + DateTime.Now.ToShortDateString();
+                    SaveJSON();
                 }
             }
             else
@@ -499,6 +520,10 @@ namespace CCS7Manager
             btnImportWeb.Enabled = true;
         }
 
+        /// <summary>
+        /// Decode the JSON file to the user list
+        /// </summary>
+        /// <returns></returns>
         private bool ReadCCS7UserList()
         {
             try
@@ -507,8 +532,10 @@ namespace CCS7Manager
                 chkAllRadios.Enabled = true;
                 chkBoxCountries.Enabled = true;
                 chkListRadios.Enabled = true;
-                chkTodos.Enabled = true;
+                chkAllCountries.Enabled = true;
                 btnExport.Enabled = true;
+                btnImportWeb.Text = "Update";
+                UpdateContactSelected();
                 return true;
             }
             catch (Exception ex)
@@ -518,15 +545,24 @@ namespace CCS7Manager
             return false;
         }
 
+        /// <summary>
+        /// Download progression udpate
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void DownloadProgressCallBack(object sender, DownloadProgressChangedEventArgs e)
         {
             tsState.Text = string.Format("DOWNLOADING : {0} % COMPLETE", e.ProgressPercentage);
         }
 
-
+        /// <summary>
+        /// CheckBox All Radio changed
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ChkTodos_CheckedChanged(object sender, EventArgs e)
         {
-          if (this.chkTodos.Checked)
+          if (this.chkAllCountries.Checked)
             this.chkBoxCountries.Enabled = false;
           else
             this.chkBoxCountries.Enabled = true;
@@ -541,13 +577,13 @@ namespace CCS7Manager
         {
             if (chkAllRadios.Checked)
             {
-                Get_Contacts(RadioType.HD1);
-                Get_Contacts(RadioType.MOTO);
-                Get_Contacts(RadioType.TYT);
-                Get_Contacts(RadioType.GD77);
-                Get_Contacts(RadioType.AnyTone);
-                Get_Contacts(RadioType.RT52);
-                Get_Contacts(RadioType.RT3S);
+                Export_Contacts(RadioType.HD1);
+                Export_Contacts(RadioType.MOTO);
+                Export_Contacts(RadioType.TYT);
+                Export_Contacts(RadioType.GD77);
+                Export_Contacts(RadioType.AnyTone);
+                Export_Contacts(RadioType.RT52);
+                Export_Contacts(RadioType.RT3S);
             }
             else
             {
@@ -556,37 +592,41 @@ namespace CCS7Manager
                     if (chkListRadios.GetItemChecked(index))
                     {
                         if (chkListRadios.Items[index].ToString() == "Ailunce HD1")
-                            Get_Contacts(RadioType.HD1);
+                            Export_Contacts(RadioType.HD1);
                         if (chkListRadios.Items[index].ToString() == "Motorola DGP-6150+")
-                            Get_Contacts(RadioType.MOTO);
+                            Export_Contacts(RadioType.MOTO);
                         if (chkListRadios.Items[index].ToString() == "Retevis RT52")
-                            Get_Contacts(RadioType.RT52);
+                            Export_Contacts(RadioType.RT52);
                         if (chkListRadios.Items[index].ToString() == "Retevis RT3S / RT90 / RT84 / RT82")
-                            Get_Contacts(RadioType.RT3S);
+                            Export_Contacts(RadioType.RT3S);
                         if (chkListRadios.Items[index].ToString() == "TYT MD-380 / MD-2017 / MD-9600")
-                            Get_Contacts(RadioType.TYT);
+                            Export_Contacts(RadioType.TYT);
                         if (chkListRadios.Items[index].ToString() == "AnyTone")
-                            Get_Contacts(RadioType.AnyTone);
+                            Export_Contacts(RadioType.AnyTone);
                         if (chkListRadios.Items[index].ToString() == "Radioddity GD-77")
-                            Get_Contacts(RadioType.GD77);
+                            Export_Contacts(RadioType.GD77);
                     }
                 }
             }
             tsState.Text = "FINISHED PROCESS";
         }
 
-        private void Get_Contacts(RadioType pRadio)
+        /// <summary>
+        /// Export Contact List for the selected Radio Model
+        /// </summary>
+        /// <param name="pRadio"></param>
+        private void Export_Contacts(RadioType pRadio)
         {
-            string str1 = Environment.GetFolderPath(Environment.SpecialFolder.Personal) +
+            string file = Settings.Default.OutputFolder +
                 Path.DirectorySeparatorChar +"Contacts_" +
                 pRadio.ToString() +
                 ".csv";
-            FileInfo fileInfo = new FileInfo(str1);
+            FileInfo fileInfo = new FileInfo(file);
             if (!fileInfo.Directory.Exists)
                 fileInfo.Directory.Create();
-            FileStream fileStream = new FileStream(str1, FileMode.Create, FileAccess.Write);
-            StreamWriter streamWriter = new StreamWriter((Stream)fileStream, Encoding.UTF8);
-            this.tsState.Text = "GENERATING " + pRadio.ToString() + " FILE";
+            FileStream fileStream = new FileStream(file, FileMode.Create, FileAccess.Write);
+            StreamWriter streamWriter = new StreamWriter(fileStream, Encoding.UTF8);
+            tsState.Text = "GENERATING " + pRadio.ToString() + " FILE";
             switch (pRadio)
             {
                 case RadioType.AnyTone:
@@ -611,10 +651,10 @@ namespace CCS7Manager
                     streamWriter.WriteLine("Radio ID,Callsign,Name,NickName,City,State,Country,,,,,,");
                     break;
             }
-            if (this.chkTodos.Checked)
+            if (chkAllCountries.Checked)
             {
                 int num = 1;
-                foreach (User user in frmPrincipal.ul.users)
+                foreach (User user in ul.users)
                 {
                     streamWriter.WriteLine(GetRadioPattern(num, pRadio,user));
                     ++num;
@@ -623,11 +663,12 @@ namespace CCS7Manager
             else
             {
                 int num = 1;
-                for (int i = 0; i < this.chkBoxCountries.Items.Count; i++)
+                for (int i = 0; i < chkBoxCountries.Items.Count; i++)
                 {
-                    if (this.chkBoxCountries.GetItemChecked(i))
+                    if (chkBoxCountries.GetItemChecked(i))
                     {
-                        foreach (User user in frmPrincipal.ul.users.Where<User>((Func<User, bool>)(Country => Country.country.Equals(this.chkBoxCountries.Items[i].ToString()))))
+                        
+                        foreach (User user in ul.users.Where(Country => Country.country.Equals(chkBoxCountries.Items[i].ToString())))
                         {
                             streamWriter.WriteLine(GetRadioPattern(num, pRadio, user));
                             ++num;
@@ -639,6 +680,13 @@ namespace CCS7Manager
             fileStream.Close();
         }
 
+        /// <summary>
+        /// Format CSV Line with given Radio Pattern
+        /// </summary>
+        /// <param name="pNum"></param>
+        /// <param name="pRadio"></param>
+        /// <param name="pUser"></param>
+        /// <returns>CSV Line to add on CSV File</returns>
         private string GetRadioPattern(int pNum, RadioType pRadio, User pUser)
         {
             string Pattern="";
@@ -668,6 +716,7 @@ namespace CCS7Manager
             }
             return Pattern;
         }
+
         /// <summary>
         /// Check if Radio List are changed
         /// </summary>
@@ -675,13 +724,13 @@ namespace CCS7Manager
         /// <param name="e"></param>
         private void ChkAllRadios_CheckedChanged(object sender, EventArgs e)
         {
-            if (chkAllRadios.Checked)
-                chkListRadios.Enabled = false;
-            else
-                chkListRadios.Enabled = true;
+            chkListRadios.Enabled = !chkAllRadios.Checked;
         }
 
-        private void btnOpenJSON_Click(object sender, EventArgs e)
+        /// <summary>
+        /// Read the cache JSON File
+        /// </summary>
+        private void LoadJSON(bool Silent=false)
         {
             string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) +
                 Path.DirectorySeparatorChar +
@@ -694,15 +743,20 @@ namespace CCS7Manager
                 CCS7UserList = File.ReadAllText(path);
                 if (ReadCCS7UserList())
                 {
-                    tsState.Text = "LOADING COMPLETED - SELECT COUNTRY AND RADIOS";
-                    btnSaveJSON.Enabled = true;
+                    tsState.Text = "LOADING COMPLETED";
                 }
+                lblVersionDate.Text = "Version Date : " + fileInfo.LastWriteTime.ToShortDateString();
             }
             else
-                MessageBox.Show("Fail to open users.json file");
+                if (!Silent) MessageBox.Show("Fail to open users.json file");
         }
 
-        private void btnSaveJSON_Click(object sender, EventArgs e)
+        /// <summary>
+        /// Save JSON File in cache folder
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void SaveJSON()
         {
             string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) +
                 Path.DirectorySeparatorChar +
@@ -717,6 +771,67 @@ namespace CCS7Manager
                 File.Delete(path);
             }
             File.WriteAllText(path, CCS7UserList, Encoding.UTF8);
+        }
+
+        /// <summary>
+        /// Checkbox select all countries change state
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void chkAllCountries_CheckedChanged(object sender, EventArgs e)
+        {
+            chkBoxCountries.Enabled = !chkAllCountries.Checked;
+            UpdateContactSelected();
+        }
+
+        /// <summary>
+        /// Choose Export Folder
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnOutputFolder_Click(object sender, EventArgs e)
+        {
+            using (var sfd = new FolderBrowserDialog())
+            {
+                sfd.SelectedPath = Settings.Default.OutputFolder;
+                if (sfd.ShowDialog() == DialogResult.OK)
+                {
+                    if(Settings.Default.OutputFolder != sfd.SelectedPath)
+                    {
+                        Settings.Default.OutputFolder = sfd.SelectedPath;
+                        Settings.Default.Save();
+                        tb_OutputFolder.Text = Settings.Default.OutputFolder;
+                    }
+                }
+            }
+        }
+
+        private void chkBoxCountries_ItemCheck(object sender, ItemCheckEventArgs e)
+        {
+            BeginInvoke((MethodInvoker)(() => UpdateContactSelected()));
+        }
+
+        private void UpdateContactSelected ()
+        {
+            int Result=0;
+            if (chkAllCountries.Checked)
+            {
+                Result = ul.users.Count;
+            }
+            else
+            {
+                for (int i = 0; i < chkBoxCountries.Items.Count; i++)
+                {
+                    if (chkBoxCountries.GetItemChecked(i))
+                    {
+                        foreach (User user in ul.users.Where(Country => Country.country.Equals(chkBoxCountries.Items[i].ToString())))
+                        {
+                            Result++;
+                        }
+                    }
+                }
+            }
+            lblContactSelected.Text = string.Format("Contacts Selected : {0}", Result);
         }
     }
 }

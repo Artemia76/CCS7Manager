@@ -1,14 +1,17 @@
-﻿using System.Reflection;
+﻿using System.Resources;
+using System.Reflection;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("HD1CManager")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("CCS7Manager")]
+[assembly: AssemblyDescription("CC7 ID Contact Generator for various Radio")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("HP Inc.")]
-[assembly: AssemblyProduct("HD1CManager")]
-[assembly: AssemblyCopyright("Copyright © HP Inc. 2019")]
+[assembly: AssemblyCompany("F4IKZ")]
+[assembly: AssemblyProduct("CCS7Manager")]
+[assembly: AssemblyCopyright("Copyright © 2020")]
 [assembly: AssemblyTrademark("")]
 [assembly: ComVisible(false)]
-[assembly: Guid("afbf7453-1d95-43ec-9273-f968b0d799e7")]
-[assembly: AssemblyFileVersion("1.2.0.0")]
-[assembly: AssemblyVersion("1.2.0.0")]
+[assembly: Guid("c49f4199-c4b3-4f8a-9841-ba391c78f51d")]
+[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("1.0.0.0")]
+[assembly: NeutralResourcesLanguage("en")]
+

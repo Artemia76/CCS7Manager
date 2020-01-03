@@ -52,7 +52,7 @@ namespace CCS7Manager
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmPrincipal));
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.chkTodos = new System.Windows.Forms.CheckBox();
+            this.chkAllCountries = new System.Windows.Forms.CheckBox();
             this.chkBoxCountries = new System.Windows.Forms.CheckedListBox();
             this.btnImportWeb = new System.Windows.Forms.Button();
             this.stBar = new System.Windows.Forms.StatusStrip();
@@ -62,9 +62,10 @@ namespace CCS7Manager
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.chkAllRadios = new System.Windows.Forms.CheckBox();
             this.chkListRadios = new System.Windows.Forms.CheckedListBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.btnOpenJSON = new System.Windows.Forms.Button();
-            this.btnSaveJSON = new System.Windows.Forms.Button();
+            this.btnOutputFolder = new System.Windows.Forms.Button();
+            this.tb_OutputFolder = new System.Windows.Forms.TextBox();
+            this.lblVersionDate = new System.Windows.Forms.Label();
+            this.lblContactSelected = new System.Windows.Forms.Label();
             this.groupBox2.SuspendLayout();
             this.stBar.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -72,7 +73,8 @@ namespace CCS7Manager
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.chkTodos);
+            this.groupBox2.Controls.Add(this.lblContactSelected);
+            this.groupBox2.Controls.Add(this.chkAllCountries);
             this.groupBox2.Controls.Add(this.chkBoxCountries);
             this.groupBox2.Location = new System.Drawing.Point(12, 12);
             this.groupBox2.Name = "groupBox2";
@@ -81,16 +83,17 @@ namespace CCS7Manager
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Country";
             // 
-            // chkTodos
+            // chkAllCountries
             // 
-            this.chkTodos.AutoSize = true;
-            this.chkTodos.Enabled = false;
-            this.chkTodos.Location = new System.Drawing.Point(6, 221);
-            this.chkTodos.Name = "chkTodos";
-            this.chkTodos.Size = new System.Drawing.Size(45, 17);
-            this.chkTodos.TabIndex = 1;
-            this.chkTodos.Text = "ALL";
-            this.chkTodos.UseVisualStyleBackColor = true;
+            this.chkAllCountries.AutoSize = true;
+            this.chkAllCountries.Enabled = false;
+            this.chkAllCountries.Location = new System.Drawing.Point(6, 221);
+            this.chkAllCountries.Name = "chkAllCountries";
+            this.chkAllCountries.Size = new System.Drawing.Size(45, 17);
+            this.chkAllCountries.TabIndex = 1;
+            this.chkAllCountries.Text = "ALL";
+            this.chkAllCountries.UseVisualStyleBackColor = true;
+            this.chkAllCountries.CheckedChanged += new System.EventHandler(this.chkAllCountries_CheckedChanged);
             // 
             // chkBoxCountries
             // 
@@ -101,12 +104,13 @@ namespace CCS7Manager
             this.chkBoxCountries.Name = "chkBoxCountries";
             this.chkBoxCountries.Size = new System.Drawing.Size(217, 184);
             this.chkBoxCountries.TabIndex = 0;
+            this.chkBoxCountries.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.chkBoxCountries_ItemCheck);
             // 
             // btnImportWeb
             // 
-            this.btnImportWeb.Location = new System.Drawing.Point(12, 294);
+            this.btnImportWeb.Location = new System.Drawing.Point(12, 265);
             this.btnImportWeb.Name = "btnImportWeb";
-            this.btnImportWeb.Size = new System.Drawing.Size(75, 23);
+            this.btnImportWeb.Size = new System.Drawing.Size(98, 23);
             this.btnImportWeb.TabIndex = 2;
             this.btnImportWeb.Text = "Download";
             this.btnImportWeb.UseVisualStyleBackColor = true;
@@ -134,16 +138,16 @@ namespace CCS7Manager
             this.tsState.Font = new System.Drawing.Font("Segoe UI", 13F, System.Drawing.FontStyle.Bold);
             this.tsState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
             this.tsState.Name = "tsState";
-            this.tsState.Size = new System.Drawing.Size(516, 25);
+            this.tsState.Size = new System.Drawing.Size(547, 25);
             this.tsState.Spring = true;
             this.tsState.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // btnExport
             // 
             this.btnExport.Enabled = false;
-            this.btnExport.Location = new System.Drawing.Point(117, 294);
+            this.btnExport.Location = new System.Drawing.Point(388, 265);
             this.btnExport.Name = "btnExport";
-            this.btnExport.Size = new System.Drawing.Size(75, 23);
+            this.btnExport.Size = new System.Drawing.Size(87, 23);
             this.btnExport.TabIndex = 4;
             this.btnExport.Text = "Export CSV";
             this.btnExport.UseVisualStyleBackColor = true;
@@ -182,44 +186,50 @@ namespace CCS7Manager
             this.chkListRadios.Size = new System.Drawing.Size(237, 184);
             this.chkListRadios.TabIndex = 0;
             // 
-            // label1
+            // btnOutputFolder
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(0, 329);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(218, 13);
-            this.label1.TabIndex = 7;
-            this.label1.Text = "Contact lists are generated in My Documents";
+            this.btnOutputFolder.Location = new System.Drawing.Point(388, 294);
+            this.btnOutputFolder.Name = "btnOutputFolder";
+            this.btnOutputFolder.Size = new System.Drawing.Size(87, 23);
+            this.btnOutputFolder.TabIndex = 10;
+            this.btnOutputFolder.Text = "Output Folder";
+            this.btnOutputFolder.UseVisualStyleBackColor = true;
+            this.btnOutputFolder.Click += new System.EventHandler(this.btnOutputFolder_Click);
             // 
-            // btnOpenJSON
+            // tb_OutputFolder
             // 
-            this.btnOpenJSON.Location = new System.Drawing.Point(12, 265);
-            this.btnOpenJSON.Name = "btnOpenJSON";
-            this.btnOpenJSON.Size = new System.Drawing.Size(75, 23);
-            this.btnOpenJSON.TabIndex = 8;
-            this.btnOpenJSON.Text = "Open JSON";
-            this.btnOpenJSON.UseVisualStyleBackColor = true;
-            this.btnOpenJSON.Click += new System.EventHandler(this.btnOpenJSON_Click);
+            this.tb_OutputFolder.Location = new System.Drawing.Point(390, 325);
+            this.tb_OutputFolder.Name = "tb_OutputFolder";
+            this.tb_OutputFolder.ReadOnly = true;
+            this.tb_OutputFolder.Size = new System.Drawing.Size(241, 20);
+            this.tb_OutputFolder.TabIndex = 11;
             // 
-            // btnSaveJSON
+            // lblVersionDate
             // 
-            this.btnSaveJSON.Enabled = false;
-            this.btnSaveJSON.Location = new System.Drawing.Point(117, 265);
-            this.btnSaveJSON.Name = "btnSaveJSON";
-            this.btnSaveJSON.Size = new System.Drawing.Size(75, 23);
-            this.btnSaveJSON.TabIndex = 9;
-            this.btnSaveJSON.Text = "Save JSON";
-            this.btnSaveJSON.UseVisualStyleBackColor = true;
-            this.btnSaveJSON.Click += new System.EventHandler(this.btnSaveJSON_Click);
+            this.lblVersionDate.AutoSize = true;
+            this.lblVersionDate.Location = new System.Drawing.Point(12, 299);
+            this.lblVersionDate.Name = "lblVersionDate";
+            this.lblVersionDate.Size = new System.Drawing.Size(85, 13);
+            this.lblVersionDate.TabIndex = 12;
+            this.lblVersionDate.Text = "No File in Cache";
+            // 
+            // lblContactSelected
+            // 
+            this.lblContactSelected.AutoSize = true;
+            this.lblContactSelected.Location = new System.Drawing.Point(63, 222);
+            this.lblContactSelected.Name = "lblContactSelected";
+            this.lblContactSelected.Size = new System.Drawing.Size(109, 13);
+            this.lblContactSelected.TabIndex = 2;
+            this.lblContactSelected.Text = "Contacts Selected : 0";
             // 
             // frmPrincipal
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(650, 393);
-            this.Controls.Add(this.btnSaveJSON);
-            this.Controls.Add(this.btnOpenJSON);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.lblVersionDate);
+            this.Controls.Add(this.tb_OutputFolder);
+            this.Controls.Add(this.btnOutputFolder);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.btnExport);
             this.Controls.Add(this.stBar);
@@ -230,7 +240,7 @@ namespace CCS7Manager
             this.MaximizeBox = false;
             this.Name = "frmPrincipal";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "CCS7ID Generator by F4IKZ";
+            this.Text = "CCS7ID Manager by F4IKZ";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnClosed);
             this.Load += new System.EventHandler(this.FrmPrincipal_Load);
@@ -252,15 +262,16 @@ namespace CCS7Manager
         private System.Windows.Forms.Button btnImportWeb;
         private System.Windows.Forms.StatusStrip stBar;
         private System.Windows.Forms.CheckedListBox chkBoxCountries;
-        private System.Windows.Forms.CheckBox chkTodos;
+        private System.Windows.Forms.CheckBox chkAllCountries;
         private System.Windows.Forms.Button btnExport;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.CheckBox chkAllRadios;
         private System.Windows.Forms.CheckedListBox chkListRadios;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private System.Windows.Forms.ToolStripStatusLabel tsState;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Button btnOpenJSON;
-        private System.Windows.Forms.Button btnSaveJSON;
+        private System.Windows.Forms.Button btnOutputFolder;
+        private System.Windows.Forms.TextBox tb_OutputFolder;
+        private System.Windows.Forms.Label lblVersionDate;
+        private System.Windows.Forms.Label lblContactSelected;
     }
 }
