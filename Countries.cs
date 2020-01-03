@@ -81,6 +81,7 @@ namespace CCS7Manager
             CountryList.Add("Greece", new List<string>() { "Greece" });
             CountryList.Add("Greenland", new List<string>() { "Greenland" });
             CountryList.Add("Grenada", new List<string>() { "Grenada" });
+            CountryList.Add("Guadeloupe", new List<string>() { "Guadeloupe" });
             CountryList.Add("Guam", new List<string>() { "Guam" });
             CountryList.Add("Guatemala", new List<string>() { "Guatemala" });
             CountryList.Add("Guinea", new List<string>() { "Guinea" });
@@ -125,6 +126,7 @@ namespace CCS7Manager
             CountryList.Add("Maldives", new List<string>() { "Maldives" });
             CountryList.Add("Mali", new List<string>() { "Mali" });
             CountryList.Add("Malta", new List<string>() { "Malta" });
+            CountryList.Add("Martinique", new List<string>() { "Martinique" });
             CountryList.Add("Mauritania", new List<string>() { "Mauritania" });
             CountryList.Add("Mauritius", new List<string>() { "Mauritius" });
             CountryList.Add("Mexico", new List<string>() { "Mexico" });
@@ -134,7 +136,7 @@ namespace CCS7Manager
             CountryList.Add("Mongolia", new List<string>() { "Mongolia" });
             CountryList.Add("Montenegro", new List<string>() { "Montenegro" });
             CountryList.Add("Montserrat", new List<string>() { "Montserrat" });
-            CountryList.Add("Morocco", new List<string>() { "Morocco" });
+            CountryList.Add("Morocco", new List<string>() { "Marocco", "Morocco" });
             CountryList.Add("Mozambique", new List<string>() { "Mozambique" });
             CountryList.Add("Namibia", new List<string>() { "Namibia" });
             CountryList.Add("Nepal", new List<string>() { "Nepal" });

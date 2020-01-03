@@ -423,70 +423,77 @@ namespace CCS7Manager
         /// <param name="pRadio"></param>
         private void Export_Contacts(RadioType pRadio)
         {
-            string file = Settings.Default.OutputFolder +
-                Path.DirectorySeparatorChar +"Contacts_" +
-                pRadio.ToString() +
-                ".csv";
-            FileInfo fileInfo = new FileInfo(file);
-            if (!fileInfo.Directory.Exists)
-                fileInfo.Directory.Create();
-            FileStream fileStream = new FileStream(file, FileMode.Create, FileAccess.Write);
-            StreamWriter streamWriter = new StreamWriter(fileStream, Encoding.UTF8);
-            tsState.Text = "GENERATING " + pRadio.ToString() + " FILE";
-            switch (pRadio)
+            try
             {
-                case RadioType.AnyTone:
-                    streamWriter.WriteLine("No.,Radio ID,Callsign,Name,City,State,Country,Remarks,Call Type,Call Alert");
-                    break;
-                case RadioType.GD77:
-                    streamWriter.WriteLine("Radio ID,Callsign,Name,NickName,City,State,Country,Remarks<br/>");
-                    break;
-                case RadioType.HD1:
-                    streamWriter.WriteLine("Call Type,Contacts Alias,City,Province,Country,Call ID");
-                    break;
-                case RadioType.MOTO:
-                    streamWriter.WriteLine("Name,radio_id");
-                    break;
-                case RadioType.RT3S:
-                    streamWriter.WriteLine("Radio ID,CallSign,Name,Nickname,City,State,Country");
-                    break;
-                case RadioType.RT52:
-                    streamWriter.WriteLine("Id,Name,Call Type,Call Alert,Call Sign,City,Province,Country,Remarks");
-                    break;
-                case RadioType.TYT:
-                    streamWriter.WriteLine("Radio ID,Callsign,Name,NickName,City,State,Country,,,,,,");
-                    break;
-            }
-            if (chkAllCountries.Checked)
-            {
-                int num = 1;
-                foreach (User user in ul.users)
+                string file = Settings.Default.OutputFolder +
+                    Path.DirectorySeparatorChar + "Contacts_" +
+                    pRadio.ToString() +
+                    ".csv";
+                FileInfo fileInfo = new FileInfo(file);
+                if (!fileInfo.Directory.Exists)
+                    fileInfo.Directory.Create();
+                FileStream fileStream = new FileStream(file, FileMode.Create, FileAccess.Write);
+                StreamWriter streamWriter = new StreamWriter(fileStream, Encoding.UTF8);
+                tsState.Text = "GENERATING " + pRadio.ToString() + " FILE";
+                switch (pRadio)
                 {
-                    streamWriter.WriteLine(GetRadioPattern(num, pRadio,user));
-                    ++num;
+                    case RadioType.AnyTone:
+                        streamWriter.WriteLine("No.,Radio ID,Callsign,Name,City,State,Country,Remarks,Call Type,Call Alert");
+                        break;
+                    case RadioType.GD77:
+                        streamWriter.WriteLine("Radio ID,Callsign,Name,NickName,City,State,Country,Remarks<br/>");
+                        break;
+                    case RadioType.HD1:
+                        streamWriter.WriteLine("Call Type,Contacts Alias,City,Province,Country,Call ID");
+                        break;
+                    case RadioType.MOTO:
+                        streamWriter.WriteLine("Name,radio_id");
+                        break;
+                    case RadioType.RT3S:
+                        streamWriter.WriteLine("Radio ID,CallSign,Name,Nickname,City,State,Country");
+                        break;
+                    case RadioType.RT52:
+                        streamWriter.WriteLine("Id,Name,Call Type,Call Alert,Call Sign,City,Province,Country,Remarks");
+                        break;
+                    case RadioType.TYT:
+                        streamWriter.WriteLine("Radio ID,Callsign,Name,NickName,City,State,Country,,,,,,");
+                        break;
                 }
-            }
-            else
-            {
-                int num = 1;
-                for (int i = 0; i < chkBoxCountries.Items.Count; i++)
+                if (chkAllCountries.Checked)
                 {
-                    if (chkBoxCountries.GetItemChecked(i))
+                    int num = 1;
+                    foreach (User user in ul.users)
                     {
-
-                        foreach (string Country_Name in countries_list.CountryList[chkBoxCountries.Items[i].ToString()])
+                        streamWriter.WriteLine(GetRadioPattern(num, pRadio, user));
+                        ++num;
+                    }
+                }
+                else
+                {
+                    int num = 1;
+                    for (int i = 0; i < chkBoxCountries.Items.Count; i++)
+                    {
+                        if (chkBoxCountries.GetItemChecked(i))
                         {
-                            foreach (User user in ul.users.Where(Country => Country.country.Equals(Country_Name)))
+
+                            foreach (string Country_Name in countries_list.CountryList[chkBoxCountries.Items[i].ToString()])
                             {
-                                streamWriter.WriteLine(GetRadioPattern(num, pRadio, user));
-                                ++num;
+                                foreach (User user in ul.users.Where(Country => Country.country.Equals(Country_Name)))
+                                {
+                                    streamWriter.WriteLine(GetRadioPattern(num, pRadio, user));
+                                    ++num;
+                                }
                             }
                         }
                     }
                 }
+                streamWriter.Close();
+                fileStream.Close();
             }
-            streamWriter.Close();
-            fileStream.Close();
+            catch (Exception ex)
+            {
+                int num = (int)MessageBox.Show(ex.Message.ToString());
+            }
         }
 
         /// <summary>
