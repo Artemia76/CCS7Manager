@@ -76,7 +76,7 @@ namespace CCS7Manager
             CountryList.Add("Fiji", new List<string>() { "Fiji" });
             CountryList.Add("Finland", new List<string>() { "Finland" });
             CountryList.Add("France", new List<string>() { "France" });
-            CountryList.Add("French Guiana", new List<string>() { "French Guiana" });
+            CountryList.Add("French Guiana", new List<string>() { "Guyana" });
             CountryList.Add("French Polynesia", new List<string>() { "French Polynesia" });
             CountryList.Add("Gambia", new List<string>() { "Gambia" });
             CountryList.Add("Georgia", new List<string>() { "Georgia" });
@@ -91,7 +91,6 @@ namespace CCS7Manager
             CountryList.Add("Guatemala", new List<string>() { "Guatemala" });
             CountryList.Add("Guinea", new List<string>() { "Guinea" });
             CountryList.Add("Guinea-Bissau", new List<string>() { "Guinea-Bissau" });
-            CountryList.Add("Guyana", new List<string>() { "Guyana" });
             CountryList.Add("Haiti", new List<string>() { "Haiti" });
             CountryList.Add("Honduras", new List<string>() { "Honduras" });
             CountryList.Add("Hong Kong", new List<string>() { "Hong Kong" });
