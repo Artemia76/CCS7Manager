@@ -63,7 +63,8 @@ namespace CCS7Manager
             GD77,
             AnyTone,
             RT52,
-            RT3S
+            RT3S,
+            BOAFENG
         }
 
         // String container for JSON File
@@ -270,6 +271,7 @@ namespace CCS7Manager
             chkListRadios.Items.Add("AnyTone");
             chkListRadios.Items.Add("Radioddity GD-77");
             chkListRadios.Items.Add("TYT MD-380 / MD-2017 / MD-9600");
+            chkListRadios.Items.Add("BOAFENG DM-1701");
 
             //Load the cached JSON File if exist
             LoadJSON(true);
@@ -390,6 +392,7 @@ namespace CCS7Manager
                 Export_Contacts(RadioType.AnyTone);
                 Export_Contacts(RadioType.RT52);
                 Export_Contacts(RadioType.RT3S);
+                Export_Contacts(RadioType.BOAFENG);
             }
             else
             {
@@ -411,6 +414,8 @@ namespace CCS7Manager
                             Export_Contacts(RadioType.AnyTone);
                         if (chkListRadios.Items[index].ToString() == "Radioddity GD-77")
                             Export_Contacts(RadioType.GD77);
+                        if (chkListRadios.Items[index].ToString() == "BOAFENG DM-1701")
+                            Export_Contacts(RadioType.BOAFENG);
                     }
                 }
             }
@@ -457,6 +462,9 @@ namespace CCS7Manager
                         break;
                     case RadioType.TYT:
                         streamWriter.WriteLine("Radio ID,Callsign,Name,NickName,City,State,Country,,,,,,");
+                        break;
+                    case RadioType.BOAFENG:
+                        streamWriter.WriteLine("Contact Name,Call Type,Call ID,Call Receive Tone");
                         break;
                 }
                 if (chkAllCountries.Checked)
@@ -536,6 +544,9 @@ namespace CCS7Manager
                     break;
                 case RadioType.TYT:
                     Pattern = radio_id + "," + callsign + "," + fname + " " + surname + "," + "," + city + "," + state + "," + country + "," + ",,,,,";
+                    break;
+                case RadioType.BOAFENG:
+                    Pattern = callsign + ",2," + radio_id + ",0";
                     break;
             }
             return Pattern;
