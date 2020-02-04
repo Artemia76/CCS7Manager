@@ -233,15 +233,20 @@ namespace CCS7Manager
             {
                 case FormWindowState.Normal:
                 case FormWindowState.Maximized:
-                    Properties.Settings.Default.WindowState = WindowState;
+                   Settings.Default.WindowState = WindowState;
                     break;
 
                 default:
-                    Properties.Settings.Default.WindowState = FormWindowState.Normal;
+                    Settings.Default.WindowState = FormWindowState.Normal;
                     break;
             }
+            Settings.Default.CountriesCheckState.Clear();
+            for (int i = 0; i < chkBoxCountries.Items.Count; i++)
+            {
+                if (chkBoxCountries.GetItemChecked(i)) Settings.Default.CountriesCheckState.Add(chkBoxCountries.Items[i].ToString());
+            }
             // Backup configuration
-            settings.Save();
+            Settings.Default.Save();
         }
         /// <summary>
         /// After Window Creation
@@ -258,9 +263,10 @@ namespace CCS7Manager
         /// </summary>
         private void InitContent()
         {
+            if (Settings.Default.CountriesCheckState == null) Settings.Default.CountriesCheckState = new System.Collections.Specialized.StringCollection();
             foreach (string Country in countries_list.CountryList.Keys)
             {
-                chkBoxCountries.Items.Add(Country);
+                chkBoxCountries.Items.Add(Country, Settings.Default.CountriesCheckState.Contains(Country));
             }
 
             // Populate Radio List ChecBox

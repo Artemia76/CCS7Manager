@@ -58,5 +58,16 @@ namespace CCS7Manager.Properties {
                 this["OutputFolder"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Collections.Specialized.StringCollection CountriesCheckState {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["CountriesCheckState"]));
+            }
+            set {
+                this["CountriesCheckState"] = value;
+            }
+        }
     }
 }
