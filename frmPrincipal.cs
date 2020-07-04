@@ -84,6 +84,22 @@ namespace CCS7Manager
             // Copy user settings from previous application version if necessary
             settings = Settings.Default;
 
+            // Copy user settings from previous application version if necessary
+            settings = Settings.Default;
+            if ((bool)settings["UpgradeRequired"] == true)
+            {
+                // upgrade the settings to the latest version
+                settings.Upgrade();
+
+                // clear the upgrade flag
+                settings["UpgradeRequired"] = false;
+                settings.Save();
+            }
+            else
+            {
+                // the settings are up to date
+            }
+
             // On vérifie des les données de taille et de position de la fenêtre ne sont pas vides
             // Et qu'elles sont toujours valides avec la configuration d'écran actuelle
             // Ceci pour éviter une fenêtre en dehors des limites
