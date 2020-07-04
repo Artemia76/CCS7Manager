@@ -294,7 +294,7 @@ namespace CCS7Manager
             {
                 using (WebClient webClient = new WebClient())
                 {
-                    Uri uri = new Uri("https://www.radioid.net/static/users.json");
+                    Uri uri = new Uri("https://database.radioid.net/static/users.json");
                     tsState.Text = "USER LIST DOWNLOAD STARTING...";
                     ServicePointManager.Expect100Continue = true;
                     ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
