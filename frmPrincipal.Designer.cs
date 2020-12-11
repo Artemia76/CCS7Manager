@@ -52,6 +52,7 @@ namespace CCS7Manager
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmPrincipal));
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.lblContactSelected = new System.Windows.Forms.Label();
             this.chkAllCountries = new System.Windows.Forms.CheckBox();
             this.chkBoxCountries = new System.Windows.Forms.CheckedListBox();
             this.btnImportWeb = new System.Windows.Forms.Button();
@@ -65,29 +66,43 @@ namespace CCS7Manager
             this.btnOutputFolder = new System.Windows.Forms.Button();
             this.tb_OutputFolder = new System.Windows.Forms.TextBox();
             this.lblVersionDate = new System.Windows.Forms.Label();
-            this.lblContactSelected = new System.Windows.Forms.Label();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.cbDatabaseList = new System.Windows.Forms.ComboBox();
+            this.btnOpenJSON = new System.Windows.Forms.Button();
+            this.chkEmpty = new System.Windows.Forms.CheckBox();
             this.groupBox2.SuspendLayout();
             this.stBar.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            this.groupBox3.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.chkEmpty);
             this.groupBox2.Controls.Add(this.lblContactSelected);
             this.groupBox2.Controls.Add(this.chkAllCountries);
             this.groupBox2.Controls.Add(this.chkBoxCountries);
             this.groupBox2.Location = new System.Drawing.Point(12, 12);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(229, 244);
+            this.groupBox2.Size = new System.Drawing.Size(229, 238);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Country";
+            // 
+            // lblContactSelected
+            // 
+            this.lblContactSelected.AutoSize = true;
+            this.lblContactSelected.Location = new System.Drawing.Point(6, 214);
+            this.lblContactSelected.Name = "lblContactSelected";
+            this.lblContactSelected.Size = new System.Drawing.Size(109, 13);
+            this.lblContactSelected.TabIndex = 2;
+            this.lblContactSelected.Text = "Contacts Selected : 0";
             // 
             // chkAllCountries
             // 
             this.chkAllCountries.AutoSize = true;
             this.chkAllCountries.Enabled = false;
-            this.chkAllCountries.Location = new System.Drawing.Point(6, 221);
+            this.chkAllCountries.Location = new System.Drawing.Point(9, 194);
             this.chkAllCountries.Name = "chkAllCountries";
             this.chkAllCountries.Size = new System.Drawing.Size(45, 17);
             this.chkAllCountries.TabIndex = 1;
@@ -102,13 +117,13 @@ namespace CCS7Manager
             this.chkBoxCountries.FormattingEnabled = true;
             this.chkBoxCountries.Location = new System.Drawing.Point(6, 19);
             this.chkBoxCountries.Name = "chkBoxCountries";
-            this.chkBoxCountries.Size = new System.Drawing.Size(217, 184);
+            this.chkBoxCountries.Size = new System.Drawing.Size(217, 169);
             this.chkBoxCountries.TabIndex = 0;
             this.chkBoxCountries.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.chkBoxCountries_ItemCheck);
             // 
             // btnImportWeb
             // 
-            this.btnImportWeb.Location = new System.Drawing.Point(12, 265);
+            this.btnImportWeb.Location = new System.Drawing.Point(125, 57);
             this.btnImportWeb.Name = "btnImportWeb";
             this.btnImportWeb.Size = new System.Drawing.Size(98, 23);
             this.btnImportWeb.TabIndex = 2;
@@ -207,33 +222,66 @@ namespace CCS7Manager
             // lblVersionDate
             // 
             this.lblVersionDate.AutoSize = true;
-            this.lblVersionDate.Location = new System.Drawing.Point(12, 299);
+            this.lblVersionDate.Location = new System.Drawing.Point(6, 88);
             this.lblVersionDate.Name = "lblVersionDate";
             this.lblVersionDate.Size = new System.Drawing.Size(85, 13);
             this.lblVersionDate.TabIndex = 12;
             this.lblVersionDate.Text = "No File in Cache";
             // 
-            // lblContactSelected
+            // groupBox3
             // 
-            this.lblContactSelected.AutoSize = true;
-            this.lblContactSelected.Location = new System.Drawing.Point(63, 222);
-            this.lblContactSelected.Name = "lblContactSelected";
-            this.lblContactSelected.Size = new System.Drawing.Size(109, 13);
-            this.lblContactSelected.TabIndex = 2;
-            this.lblContactSelected.Text = "Contacts Selected : 0";
+            this.groupBox3.Controls.Add(this.cbDatabaseList);
+            this.groupBox3.Controls.Add(this.btnOpenJSON);
+            this.groupBox3.Controls.Add(this.btnImportWeb);
+            this.groupBox3.Controls.Add(this.lblVersionDate);
+            this.groupBox3.Location = new System.Drawing.Point(12, 256);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(229, 104);
+            this.groupBox3.TabIndex = 13;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Database ";
+            // 
+            // cbDatabaseList
+            // 
+            this.cbDatabaseList.FormattingEnabled = true;
+            this.cbDatabaseList.Location = new System.Drawing.Point(9, 20);
+            this.cbDatabaseList.Name = "cbDatabaseList";
+            this.cbDatabaseList.Size = new System.Drawing.Size(214, 21);
+            this.cbDatabaseList.TabIndex = 14;
+            // 
+            // btnOpenJSON
+            // 
+            this.btnOpenJSON.Location = new System.Drawing.Point(9, 57);
+            this.btnOpenJSON.Name = "btnOpenJSON";
+            this.btnOpenJSON.Size = new System.Drawing.Size(98, 23);
+            this.btnOpenJSON.TabIndex = 13;
+            this.btnOpenJSON.Text = "Open JSON";
+            this.btnOpenJSON.UseVisualStyleBackColor = true;
+            this.btnOpenJSON.Click += new System.EventHandler(this.btnOpenJSON_Click);
+            // 
+            // chkEmpty
+            // 
+            this.chkEmpty.AutoSize = true;
+            this.chkEmpty.Enabled = false;
+            this.chkEmpty.Location = new System.Drawing.Point(70, 194);
+            this.chkEmpty.Name = "chkEmpty";
+            this.chkEmpty.Size = new System.Drawing.Size(79, 17);
+            this.chkEmpty.TabIndex = 3;
+            this.chkEmpty.Text = "No Country";
+            this.chkEmpty.UseVisualStyleBackColor = true;
+            this.chkEmpty.CheckedChanged += new System.EventHandler(this.chkEmpty_CheckedChanged);
             // 
             // frmPrincipal
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(650, 393);
-            this.Controls.Add(this.lblVersionDate);
+            this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.tb_OutputFolder);
             this.Controls.Add(this.btnOutputFolder);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.btnExport);
             this.Controls.Add(this.stBar);
-            this.Controls.Add(this.btnImportWeb);
             this.Controls.Add(this.groupBox2);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -252,6 +300,8 @@ namespace CCS7Manager
             this.stBar.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -273,5 +323,9 @@ namespace CCS7Manager
         private System.Windows.Forms.TextBox tb_OutputFolder;
         private System.Windows.Forms.Label lblVersionDate;
         private System.Windows.Forms.Label lblContactSelected;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.ComboBox cbDatabaseList;
+        private System.Windows.Forms.Button btnOpenJSON;
+        private System.Windows.Forms.CheckBox chkEmpty;
     }
 }

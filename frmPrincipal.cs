@@ -21,13 +21,12 @@
 ****************************************************************************/
 
 /****************************************************************************
- * MainFrame.cs is part of FF2Play project
+ * MainFrame.cs is part of  CCS7Manager project
  *
  * This class 
  * **************************************************************************/
 
 using CCS7Manager.Properties;
-using Newtonsoft.Json;
 using System;
 using System.Configuration;
 using System.Drawing;
@@ -37,6 +36,10 @@ using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
+using System.Collections.Specialized;
+using System.Runtime.Serialization.Formatters.Binary;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 
 namespace CCS7Manager
 {
@@ -45,6 +48,8 @@ namespace CCS7Manager
     /// </summary>
     public partial class frmPrincipal : Form
     {
+        private StringDictionary DBList;
+
         private static UserList ul;
 
         private ApplicationSettingsBase settings;
@@ -64,11 +69,12 @@ namespace CCS7Manager
             AnyTone,
             RT52,
             RT3S,
-            BOAFENG
+            BOAFENG,
+            DVPI
         }
 
         // String container for JSON File
-        private string CCS7UserList;
+        private String JsonContent;
 
         /// <summary>
         /// Constructor for main window
@@ -136,6 +142,25 @@ namespace CCS7Manager
 
             countries_list = new Countries();
             windowInitialized = true;
+            //If source database is not initialized, we load default knowns servers
+            if (Settings.Default.DBSourcesURL.Length == 0)
+            {
+                DBList = new StringDictionary();
+                DBList.Add("radioid", "https://database.radioid.net/static/users.json");
+                DBList.Add("theshield", "http://theshield.site/local_subscriber_ids.json");
+                Settings.Default.DBCurrentSource = "radioid";
+            }
+            else
+            {
+                using (MemoryStream ms = new MemoryStream(Convert.FromBase64String(Settings.Default.DBSourcesURL)))
+                {
+                    if (ms.Length != 0)
+                    {
+                        BinaryFormatter bf = new BinaryFormatter();
+                        DBList = (StringDictionary)bf.Deserialize(ms);
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -261,6 +286,18 @@ namespace CCS7Manager
             {
                 if (chkBoxCountries.GetItemChecked(i)) Settings.Default.CountriesCheckState.Add(chkBoxCountries.Items[i].ToString());
             }
+            //Check the Database source 
+            Settings.Default.DBCurrentSource = cbDatabaseList.SelectedText;
+            using (MemoryStream ms = new MemoryStream())
+            {
+                BinaryFormatter bf = new BinaryFormatter();
+                bf.Serialize(ms, DBList);
+                ms.Position = 0;
+                byte[] buffer = new byte[(int)ms.Length];
+                ms.Read(buffer, 0, buffer.Length);
+                Settings.Default.DBSourcesURL = Convert.ToBase64String(buffer);
+            }
+            Settings.Default.NoCountry = chkEmpty.Checked;
             // Backup configuration
             Settings.Default.Save();
         }
@@ -273,7 +310,7 @@ namespace CCS7Manager
         {
           InitContent();
         }
-    
+
         /// <summary>
         /// Init all contenair on main window
         /// </summary>
@@ -294,9 +331,18 @@ namespace CCS7Manager
             chkListRadios.Items.Add("Radioddity GD-77");
             chkListRadios.Items.Add("TYT MD-380 / MD-2017 / MD-9600");
             chkListRadios.Items.Add("BOAFENG DM-1701");
+            chkListRadios.Items.Add("DVPi");
 
             //Load the cached JSON File if exist
             LoadJSON(true);
+
+            //Load Database source list
+            cbDatabaseList.DataSource = new BindingSource(DBList, null);
+            cbDatabaseList.DisplayMember = "Key";
+            cbDatabaseList.ValueMember = "Value";
+            cbDatabaseList.SelectedIndex = cbDatabaseList.FindString(Settings.Default.DBCurrentSource);
+
+            chkEmpty.Checked = Settings.Default.NoCountry;
         }
     
         /// <summary>
@@ -310,7 +356,8 @@ namespace CCS7Manager
             {
                 using (WebClient webClient = new WebClient())
                 {
-                    Uri uri = new Uri("https://database.radioid.net/static/users.json");
+                    //Uri uri = new Uri("https://database.radioid.net/static/users.json");
+                    Uri uri = new Uri((string)cbDatabaseList.SelectedValue);
                     tsState.Text = "USER LIST DOWNLOAD STARTING...";
                     ServicePointManager.Expect100Continue = true;
                     ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
@@ -318,6 +365,7 @@ namespace CCS7Manager
                     webClient.DownloadProgressChanged += DownloadProgressCallBack;
                     webClient.DownloadStringAsync(uri);
                     btnImportWeb.Enabled = false;
+                    btnOpenJSON.Enabled = false;
                 }
             }
             catch (Exception ex)
@@ -335,7 +383,7 @@ namespace CCS7Manager
         {
             if (!e.Cancelled && e.Error == null)
             {
-                CCS7UserList = (string)e.Result;
+                JsonContent = (string)e.Result;
                 if (ReadCCS7UserList())
                 {
                     tsState.Text = "DOWNLOAD COMPLETED";
@@ -358,13 +406,40 @@ namespace CCS7Manager
         {
             try
             {
-                frmPrincipal.ul = JsonConvert.DeserializeObject<UserList>(CCS7UserList);
+                //if it standard Serialized JSON from this app
+                if (JsonContent.StartsWith("{\"users\":[{"))
+                {
+                    frmPrincipal.ul = JsonConvert.DeserializeObject<UserList>(JsonContent);
+                }
+                // Else we need to parse the unknown Json Format
+                else
+                {
+                    ul.users.Clear();
+                    JObject jo = JObject.Parse(JsonContent);
+                    JArray ja = (JArray)jo["results"];
+                    foreach (JObject o in ja)
+                    {
+                        User u = new User();
+                        u.fname = (string)o["fname"];
+                        u.callsign = (string)o["callsign"];
+                        u.city = (string)o["city"];
+                        u.radio_id = (string)o["id"];
+                        u.country = (string)o["country"];
+                        u.remarks = (string)o["remarks"];
+                        u.surname = (string)o["surname"];
+                        u.state = (string)o["state"];
+                        ul.users.Add(u);
+                    }
+                }
                 chkAllRadios.Enabled = true;
                 chkBoxCountries.Enabled = true;
                 chkListRadios.Enabled = true;
                 chkAllCountries.Enabled = true;
+                chkEmpty.Enabled = true;
                 btnExport.Enabled = true;
                 btnImportWeb.Text = "Update";
+                btnOpenJSON.Enabled = true;
+                btnImportWeb.Enabled = true;
                 UpdateContactSelected();
                 return true;
             }
@@ -415,6 +490,7 @@ namespace CCS7Manager
                 Export_Contacts(RadioType.RT52);
                 Export_Contacts(RadioType.RT3S);
                 Export_Contacts(RadioType.BOAFENG);
+                Export_Contacts(RadioType.DVPI);
             }
             else
             {
@@ -438,6 +514,8 @@ namespace CCS7Manager
                             Export_Contacts(RadioType.GD77);
                         if (chkListRadios.Items[index].ToString() == "BOAFENG DM-1701")
                             Export_Contacts(RadioType.BOAFENG);
+                        if (chkListRadios.Items[index].ToString() == "DVPi")
+                            Export_Contacts(RadioType.DVPI);
                     }
                 }
             }
@@ -488,6 +566,8 @@ namespace CCS7Manager
                     case RadioType.BOAFENG:
                         streamWriter.WriteLine("Contact Name,Call Type,Call ID,Call Receive Tone");
                         break;
+                    default:
+                        break;
                 }
                 if (chkAllCountries.Checked)
                 {
@@ -501,6 +581,14 @@ namespace CCS7Manager
                 else
                 {
                     int num = 1;
+                    if (chkEmpty.Checked)
+                    {
+                        foreach (User user in ul.users.Where(Country => Country.country.Equals("")))
+                        {
+                            streamWriter.WriteLine(GetRadioPattern(num, pRadio, user));
+                            ++num;
+                        }
+                    }
                     for (int i = 0; i < chkBoxCountries.Items.Count; i++)
                     {
                         if (chkBoxCountries.GetItemChecked(i))
@@ -570,6 +658,9 @@ namespace CCS7Manager
                 case RadioType.BOAFENG:
                     Pattern = callsign + ",2," + radio_id + ",0";
                     break;
+                case RadioType.DVPI:
+                    Pattern = radio_id + "," + callsign + "," + fname;
+                    break;
             }
             return Pattern;
         }
@@ -587,17 +678,25 @@ namespace CCS7Manager
         /// <summary>
         /// Read the cache JSON File
         /// </summary>
-        private void LoadJSON(bool Silent=false)
+        private void LoadJSON(bool Silent=false, string pPath = "")
         {
-            string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) +
+            string path;
+            if (pPath == "")
+            {
+                path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) +
                 Path.DirectorySeparatorChar +
                 System.Reflection.Assembly.GetExecutingAssembly().GetName().Name +
                 Path.DirectorySeparatorChar +
                 "users.json";
+            }
+            else
+            {
+                path = pPath;
+            }
             FileInfo fileInfo = new FileInfo(path);
             if (fileInfo.Exists)
             {
-                CCS7UserList = File.ReadAllText(path);
+                JsonContent = File.ReadAllText(path);
                 if (ReadCCS7UserList())
                 {
                     tsState.Text = "LOADING COMPLETED";
@@ -627,7 +726,7 @@ namespace CCS7Manager
             {
                 File.Delete(path);
             }
-            File.WriteAllText(path, CCS7UserList, Encoding.UTF8);
+            File.WriteAllText(path, JsonConvert.SerializeObject(ul));
         }
 
         /// <summary>
@@ -679,6 +778,7 @@ namespace CCS7Manager
         private void UpdateContactSelected ()
         {
             int Result=0;
+            if (ul == null) return;
             if (chkAllCountries.Checked)
             {
                 Result = ul.users.Count;
@@ -696,6 +796,13 @@ namespace CCS7Manager
                                 Result++;
                             }
                         }
+                    }
+                }
+                if (chkEmpty.Checked)
+                {
+                    foreach (User user in ul.users.Where(Country => Country.country.Equals("")))
+                    {
+                        Result++;
                     }
                 }
             }
@@ -716,6 +823,26 @@ namespace CCS7Manager
                 result = pString.Replace(",", " ");
             }
             return result;
+        }
+
+        private void btnOpenJSON_Click(object sender, EventArgs e)
+        {
+            var ofd = new OpenFileDialog();
+            ofd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
+            ofd.Filter = "JSON files (*.json)|*.json|All file (*.*)|*.*";
+            ofd.FilterIndex = 0;
+            btnImportWeb.Enabled = false;
+            btnOpenJSON.Enabled = false;
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+                LoadJSON(true, ofd.FileName);
+                SaveJSON();
+            }
+        }
+
+        private void chkEmpty_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateContactSelected();
         }
     }
 }
