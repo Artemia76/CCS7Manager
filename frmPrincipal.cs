@@ -70,7 +70,7 @@ namespace CCS7Manager
             AnyTone,
             RT52,
             RT3S,
-            BOAFENG,
+            BAOFENG,
             DVPI
         }
 
@@ -499,7 +499,7 @@ namespace CCS7Manager
                 Export_Contacts(RadioType.AnyTone);
                 Export_Contacts(RadioType.RT52);
                 Export_Contacts(RadioType.RT3S);
-                Export_Contacts(RadioType.BOAFENG);
+                Export_Contacts(RadioType.BAOFENG);
                 Export_Contacts(RadioType.DVPI);
             }
             else
@@ -522,8 +522,8 @@ namespace CCS7Manager
                             Export_Contacts(RadioType.AnyTone);
                         if (chkListRadios.Items[index].ToString() == "Radioddity GD-77")
                             Export_Contacts(RadioType.GD77);
-                        if (chkListRadios.Items[index].ToString() == "BOAFENG DM-1701")
-                            Export_Contacts(RadioType.BOAFENG);
+                        if (chkListRadios.Items[index].ToString() == "BAOFENG DM-1701")
+                            Export_Contacts(RadioType.BAOFENG);
                         if (chkListRadios.Items[index].ToString() == "DVPi")
                             Export_Contacts(RadioType.DVPI);
                     }
@@ -573,7 +573,7 @@ namespace CCS7Manager
                     case RadioType.TYT:
                         streamWriter.WriteLine("Radio ID,Callsign,Name,NickName,City,State,Country,,,,,,");
                         break;
-                    case RadioType.BOAFENG:
+                    case RadioType.BAOFENG:
                         streamWriter.WriteLine("Contact Name,Call Type,Call ID,Call Receive Tone");
                         break;
                     default:
@@ -665,7 +665,7 @@ namespace CCS7Manager
                 case RadioType.TYT:
                     Pattern = radio_id + "," + callsign + "," + fname + " " + surname + "," + "," + city + "," + state + "," + country + "," + ",,,,,";
                     break;
-                case RadioType.BOAFENG:
+                case RadioType.BAOFENG:
                     Pattern = callsign + ",2," + radio_id + ",0";
                     break;
                 case RadioType.DVPI:
