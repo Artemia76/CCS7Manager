@@ -37,6 +37,7 @@ using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using System.Collections.Specialized;
+using System.Collections.Generic;
 using System.Runtime.Serialization.Formatters.Binary;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
@@ -414,7 +415,16 @@ namespace CCS7Manager
                 // Else we need to parse the unknown Json Format
                 else
                 {
-                    ul.users.Clear();
+                    if (frmPrincipal.ul != null)
+                    {
+                        frmPrincipal.ul.users.Clear();
+                    }
+                    else
+                    {
+                        frmPrincipal.ul = new UserList();
+                        frmPrincipal.ul.users = new List<User>();
+                    }
+
                     JObject jo = JObject.Parse(JsonContent);
                     JArray ja = (JArray)jo["results"];
                     foreach (JObject o in ja)
@@ -428,7 +438,7 @@ namespace CCS7Manager
                         u.remarks = (string)o["remarks"];
                         u.surname = (string)o["surname"];
                         u.state = (string)o["state"];
-                        ul.users.Add(u);
+                        frmPrincipal.ul.users.Add(u);
                     }
                 }
                 chkAllRadios.Enabled = true;

@@ -11,3 +11,5 @@ ChangeLog:
 1.0.4 : Update download contact source
 
 1.0.5 : Add Multi source ID list and DVPI export
+
+1.0.6 : Bug correction on shield network CCS7 id database
