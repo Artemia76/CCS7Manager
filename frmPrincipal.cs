@@ -71,7 +71,8 @@ namespace CCS7Manager
             RT52,
             RT3S,
             BAOFENG,
-            DVPI
+            DVPI,
+            PISTAR
         }
 
         // String container for JSON File
@@ -333,6 +334,7 @@ namespace CCS7Manager
             chkListRadios.Items.Add("TYT MD-380 / MD-2017 / MD-9600");
             chkListRadios.Items.Add("BOAFENG DM-1701");
             chkListRadios.Items.Add("DVPi");
+            chkListRadios.Items.Add("PI_Star");
 
             //Load the cached JSON File if exist
             LoadJSON(true);
@@ -501,6 +503,7 @@ namespace CCS7Manager
                 Export_Contacts(RadioType.RT3S);
                 Export_Contacts(RadioType.BAOFENG);
                 Export_Contacts(RadioType.DVPI);
+                Export_Contacts(RadioType.PISTAR);
             }
             else
             {
@@ -526,6 +529,8 @@ namespace CCS7Manager
                             Export_Contacts(RadioType.BAOFENG);
                         if (chkListRadios.Items[index].ToString() == "DVPi")
                             Export_Contacts(RadioType.DVPI);
+                        if (chkListRadios.Items[index].ToString() == "PI-Star")
+                            Export_Contacts(RadioType.PISTAR);
                     }
                 }
             }
@@ -540,10 +545,13 @@ namespace CCS7Manager
         {
             try
             {
+                string ext="csv";
+                if (pRadio == RadioType.PISTAR)
+                    ext = ".dat";
                 string file = Settings.Default.OutputFolder +
                     Path.DirectorySeparatorChar + "Contacts_" +
                     pRadio.ToString() +
-                    ".csv";
+                    ext;
                 FileInfo fileInfo = new FileInfo(file);
                 if (!fileInfo.Directory.Exists)
                     fileInfo.Directory.Create();
@@ -648,7 +656,7 @@ namespace CCS7Manager
                     Pattern = pNum.ToString() + "," + radio_id + "," + callsign + "," + fname + " " + surname + "," + city + "," + state + "," + country + "," + remarks + ",0,0,";
                     break;
                 case RadioType.GD77:
-                    Pattern = radio_id + "," + callsign + "," + fname + " " + surname + "," + "," + city + "," + state + "," +country + "," + "<br/>";
+                    Pattern = radio_id + "," + callsign + "," + fname + " " + surname + "," + "," + city + "," + state + "," + country + "," + "<br/>";
                     break;
                 case RadioType.HD1:
                     Pattern = "Private Call," + callsign + " " + fname + "," + city + "," + state + "," + country + "," + radio_id;
@@ -670,6 +678,9 @@ namespace CCS7Manager
                     break;
                 case RadioType.DVPI:
                     Pattern = radio_id + "," + callsign + "," + fname;
+                    break;
+                case RadioType.PISTAR:
+                    Pattern = radio_id + "\t" + callsign + "\t" + fname;
                     break;
             }
             return Pattern;
