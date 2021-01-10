@@ -334,7 +334,7 @@ namespace CCS7Manager
             chkListRadios.Items.Add("TYT MD-380 / MD-2017 / MD-9600");
             chkListRadios.Items.Add("BOAFENG DM-1701");
             chkListRadios.Items.Add("DVPi");
-            chkListRadios.Items.Add("PI_Star");
+            chkListRadios.Items.Add("PI-Star");
 
             //Load the cached JSON File if exist
             LoadJSON(true);
