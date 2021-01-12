@@ -13,3 +13,7 @@ ChangeLog:
 1.0.5 : Add Multi source ID list and DVPI export
 
 1.0.6 : Bug correction on shield network CCS7 id database
+
+1.0.7 : Add Pi-Star export to .dat file
+
+1.0.8 : Bug fixe on CSV export

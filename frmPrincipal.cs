@@ -545,7 +545,7 @@ namespace CCS7Manager
         {
             try
             {
-                string ext="csv";
+                string ext=".csv";
                 if (pRadio == RadioType.PISTAR)
                     ext = ".dat";
                 string file = Settings.Default.OutputFolder +
