@@ -53,6 +53,8 @@ namespace CCS7Manager
 
         private static UserList ul;
 
+        private CCS7DB m_DB;
+
         private ApplicationSettingsBase settings;
 
         // Init state of the window
