@@ -165,6 +165,8 @@ namespace CCS7Manager
                     }
                 }
             }
+            m_DB = new CCS7DB();
+
         }
 
         /// <summary>

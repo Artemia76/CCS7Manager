@@ -27,6 +27,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data.SQLite;
 using System.Data;
+using System.IO;
 
 namespace CCS7Manager
 {
@@ -34,6 +35,7 @@ namespace CCS7Manager
     {
 		private SQLiteConnection m_DB;
 		private string m_DatabasePath;
+		private string m_DatabaseFile;
 		private bool m_Initialized;
 		public bool IsInit
         {
@@ -43,17 +45,26 @@ namespace CCS7Manager
 		public CCS7DB()
 		{
 			m_Initialized = false;
-			// On localise l'installateur de chaque simulateur
+			InitSQLite();
 		}
 		/// <summary>
-		/// Initialise la base de donnée des AI ou la met à jour
+		/// Initialise la base de donnée 
 		/// </summary>
 		private void InitSQLite()
 		{
 			try
 			{
-				m_DatabasePath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + "\\CCS7ID.sqlite";
-				m_DB = new SQLiteConnection("Data Source=" + m_DatabasePath + ";Version=3;");
+				m_DatabasePath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
+				m_DatabaseFile = m_DatabasePath + "\\CCS7ID.sqlite";
+				if (!Directory.Exists(m_DatabasePath))
+                {
+					Directory.CreateDirectory(m_DatabasePath);
+				}
+				if (!File.Exists(m_DatabaseFile))
+                {
+					SQLiteConnection.CreateFile(m_DatabaseFile);
+				}
+				m_DB = new SQLiteConnection("Data Source=" + m_DatabaseFile + ";Version=3;");
 				if (m_DB == null) return;
 				m_DB.Open();
 				SQLiteCommand cmd = m_DB.CreateCommand();
