@@ -21,26 +21,25 @@
 ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Data.SQLite;
 using System.Data;
 using System.IO;
+using System.Windows.Forms;
+using System.Collections.Generic;
+using System.Collections.Specialized;
 
 namespace CCS7Manager
 {
-    class CCS7DB
-    {
+	class CCS7DB
+	{
 		private SQLiteConnection m_DB;
 		private string m_DatabasePath;
 		private string m_DatabaseFile;
 		private bool m_Initialized;
 		public bool IsInit
-        {
-            get { return m_Initialized; }
-        }
+		{
+			get { return m_Initialized; }
+		}
 
 		public CCS7DB()
 		{
@@ -57,33 +56,329 @@ namespace CCS7Manager
 				m_DatabasePath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
 				m_DatabaseFile = m_DatabasePath + "\\CCS7ID.sqlite";
 				if (!Directory.Exists(m_DatabasePath))
-                {
+				{
 					Directory.CreateDirectory(m_DatabasePath);
 				}
 				if (!File.Exists(m_DatabaseFile))
-                {
+				{
 					SQLiteConnection.CreateFile(m_DatabaseFile);
 				}
 				m_DB = new SQLiteConnection("Data Source=" + m_DatabaseFile + ";Version=3;");
 				if (m_DB == null) return;
 				m_DB.Open();
+				//Test if ccs7id table exist
 				SQLiteCommand cmd = m_DB.CreateCommand();
 				cmd.CommandType = CommandType.Text;
-				cmd.CommandText = "create table if not exists ccs7id ( Id int, CallSign varchar(32) collate nocase, City varchar(32) collate nocase, Country varchar(32) collate nocase, FName varchar(32) collate nocase, Remarks varchar(256) collate nocase, State varchar(32) collate nocase, Surname varchar(32) collate nocase)";
-				cmd.ExecuteNonQuery();
+				cmd.CommandText = "SELECT name FROM sqlite_master WHERE type='table' AND name='ccs7id';";
+				SQLiteDataReader r = cmd.ExecuteReader();
+				if (r.StepCount < 1)
+				{
+					// Create ccs7id table if not exist
+					cmd = m_DB.CreateCommand();
+					cmd.CommandType = CommandType.Text;
+					cmd.CommandText = "CREATE TABLE IF NOT EXISTS ccs7id ( Id INTEGER PRIMARY KEY, CallSign TEXT nocase, City TEXT nocase, Country TEXT nocase, FName TEXT nocase, Remarks TEXT nocase, State TEXT nocase, Surname TEXT nocase)";
+					cmd.ExecuteNonQuery();
+				}
+				//Test if sources table exist
+				cmd = m_DB.CreateCommand();
+				cmd.CommandType = CommandType.Text;
+				cmd.CommandText = "SELECT name FROM sqlite_master WHERE type='table' AND name='sources';";
+				r = cmd.ExecuteReader();
+				if (r.StepCount < 1)
+				{
+					// Create sources table if not exist
+					cmd = m_DB.CreateCommand();
+					cmd.CommandType = CommandType.Text;
+					cmd.CommandText = "CREATE TABLE IF NOT EXISTS sources ( Source_Id INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT, Description TEXT, URL TEXT)";
+					cmd.ExecuteNonQuery();
+
+					AddSource("RadioID", "Official DMR id from RA community", "https://database.radioid.net/static/users.json");
+					AddSource("TheShield", "The Shield Community of Amateur Radio", "http://theshield.site/local_subscriber_ids.json");
+				}
 				m_Initialized = true;
 				return;
 			}
 			catch (SQLiteException e)
 			{
+				MessageBox.Show(e.Message);
 				return;
 			}
 			catch (Exception e)
 			{
+				MessageBox.Show(e.Message);
 				return;
 			}
 		}
 
+		public bool AddSource(string pName, string pDescription, string pURL)
+		{
+			try
+			{
+				if (m_DB == null) return false;
+				SQLiteParameter sName = new SQLiteParameter("@Name", pName);
+				SQLiteParameter sDescription = new SQLiteParameter("@Description", pDescription);
+				SQLiteParameter sURL = new SQLiteParameter("@URL", pURL);
+				SQLiteCommand cmd = m_DB.CreateCommand();
+				cmd.CommandType = CommandType.Text;
+				cmd.CommandText = "INSERT INTO sources (Name,Description,URL) VALUES (@Name, @Description, @URL);";
+				cmd.Parameters.Add(sName);
+				cmd.Parameters.Add(sDescription);
+				cmd.Parameters.Add(sURL);
+				cmd.ExecuteNonQuery();
+				return true;
 
+			}
+			catch (SQLiteException e)
+			{
+				MessageBox.Show(e.Message);
+				return false;
+			}
+			catch (Exception e)
+			{
+				MessageBox.Show(e.Message);
+				return false;
+			}
+		}
+
+		public StringDictionary GetSourceList()
+		{
+			StringDictionary List = new StringDictionary();
+			try
+			{
+				if (m_DB != null)
+				{
+					SQLiteCommand cmd = m_DB.CreateCommand();
+					cmd.CommandType = CommandType.Text;
+					cmd.CommandText = "SELECT * FROM sources;";
+					SQLiteDataReader r = cmd.ExecuteReader();
+					while (r.Read())
+					{
+						List.Add(r.GetString(1), r.GetString(3));
+					}
+				}
+			}
+			catch (Exception e)
+			{
+				MessageBox.Show(e.Message);
+			}
+			return List;
+		}
+
+		public User GetUser(int pId)
+		{
+			User pUser = new User();
+			pUser.radio_id = -1;
+			try
+			{
+				if (m_DB != null)
+				{
+					SQLiteParameter sID = new SQLiteParameter("@Id", pId);
+					SQLiteCommand cmd = m_DB.CreateCommand();
+					cmd.CommandType = CommandType.Text;
+					cmd.CommandText = "SELECT * FROM ccs7id WHERE Id = @Id;";
+					cmd.Parameters.Add(sID);
+					SQLiteDataReader r = cmd.ExecuteReader();
+					if (r.StepCount > 0)
+					{
+						r.Read();
+						pUser.radio_id = r.GetInt32(0);
+						pUser.callsign = r.GetString(1);
+						pUser.city = r.GetString(2);
+						pUser.country = r.GetString(3);
+						pUser.fname = r.GetString(4);
+						pUser.remarks = r.GetString(5);
+						pUser.state = r.GetString(6);
+						pUser.surname = r.GetString(7);
+					}
+				}
+
+			}
+			catch (Exception e)
+			{
+				MessageBox.Show(e.Message);
+			}
+			return pUser;
+		}
+
+		public List<User> GetUserList()
+        {
+			List<User> pList = new List<User>();
+			try
+			{
+				if (m_DB != null)
+				{
+					SQLiteCommand cmd = m_DB.CreateCommand();
+					cmd.CommandType = CommandType.Text;
+					cmd.CommandText = "SELECT * FROM ccs7id;";
+					SQLiteDataReader r = cmd.ExecuteReader();
+					while (r.Read())
+					{
+						User u = new User();
+						u.radio_id = r.GetInt32(0);
+						u.callsign = r.GetString(1);
+						u.city = r.GetString(2);
+						u.country = r.GetString(3);
+						u.fname = r.GetString(4);
+						u.remarks = r.GetString(5);
+						u.state = r.GetString(6);
+						u.surname = r.GetString(7);
+						pList.Add(u);
+					}
+				}
+
+			}
+			catch (Exception e)
+			{
+				MessageBox.Show(e.Message);
+			}
+			return pList;
+		}
+
+		public int GetUserCount()
+        {
+			try
+			{
+				if (m_DB != null)
+				{
+					SQLiteCommand cmd = m_DB.CreateCommand();
+					cmd.CommandType = CommandType.Text;
+					cmd.CommandText = "SELECT COUNT(*) FROM ccs7id;";
+					return Convert.ToInt32(cmd.ExecuteScalar());
+				}
+
+			}
+			catch (Exception e)
+			{
+				MessageBox.Show(e.Message);
+			}
+			return 0;
+		}
+
+		public bool AddUsers(UserList pUserList)
+		{
+			try
+			{
+				if (m_DB == null) return false;
+				SQLiteCommand cmd = m_DB.CreateCommand();
+				SQLiteTransaction transaction = m_DB.BeginTransaction();
+				cmd.CommandType = CommandType.Text;
+				cmd.CommandText = "INSERT OR REPLACE INTO ccs7id (Id,Callsign,City,Country,FName,Remarks,State,Surname) VALUES (@ID, @Callsign, @City, @Country, @FName, @Remarks, @State, @Surname);";
+				cmd.Parameters.AddWithValue("@ID", -1);
+				cmd.Parameters.AddWithValue("@Callsign", "");
+				cmd.Parameters.AddWithValue("@City", "");
+				cmd.Parameters.AddWithValue("@Country", "");
+				cmd.Parameters.AddWithValue("@FName", "");
+				cmd.Parameters.AddWithValue("@Remarks", "");
+				cmd.Parameters.AddWithValue("@State", "");
+				cmd.Parameters.AddWithValue("@Surname", "");
+				foreach (User u in pUserList.users)
+				{
+					cmd.Parameters["@ID"].Value = u.radio_id;
+					cmd.Parameters["@Callsign"].Value = u.callsign;
+					cmd.Parameters["@City"].Value = u.city;
+					cmd.Parameters["@Country"].Value = u.country;
+					cmd.Parameters["@FName"].Value = u.fname;
+					cmd.Parameters["@Remarks"].Value = u.remarks;
+					cmd.Parameters["@State"].Value = u.state;
+					cmd.Parameters["@Surname"].Value = u.surname;
+					cmd.ExecuteNonQuery();
+				}
+				transaction.Commit();
+				cmd.Dispose();
+				return true;
+
+			}
+			catch (SQLiteException e)
+			{
+				MessageBox.Show(e.Message);
+				return false;
+			}
+			catch (Exception e)
+			{
+				MessageBox.Show(e.Message);
+				return false;
+			}
+		}
+
+		public List<String> GetCountryList()
+		{
+			List<String> pList = new List<string>();
+			try
+			{
+				if (m_DB != null)
+				{
+					SQLiteCommand cmd = m_DB.CreateCommand();
+					cmd.CommandType = CommandType.Text;
+					cmd.CommandText = "SELECT DISTINCT Country FROM ccs7id ORDER BY Country;";
+					SQLiteDataReader r = cmd.ExecuteReader();
+					while (r.Read())
+					{
+						pList.Add(r.GetString(0));
+					}
+				}
+			}
+			catch (Exception e)
+			{
+				MessageBox.Show(e.Message);
+			}
+			return pList;
+
+		}
+
+		public int GetCountryNumber(string pCountry)
+		{
+			try
+			{
+				if (m_DB != null)
+				{
+					SQLiteCommand cmd = m_DB.CreateCommand();
+					cmd.CommandType = CommandType.Text;
+					cmd.CommandText = "SELECT COUNT(*) FROM ccs7id WHERE Country like @Country;";
+					cmd.Parameters.AddWithValue("@Country", pCountry);
+					return Convert.ToInt32(cmd.ExecuteScalar());
+				}
+
+			}
+			catch (Exception e)
+			{
+				MessageBox.Show(e.Message);
+			}
+			return 0;
+		}
+
+		public List<User> GetUserListByCountry (string pCountry)
+        {
+			List<User> pList = new List<User>();
+			try
+			{
+				if (m_DB != null)
+				{
+					SQLiteCommand cmd = m_DB.CreateCommand();
+					cmd.CommandType = CommandType.Text;
+					cmd.CommandText = "SELECT * FROM ccs7id WHERE Country like @Country;";
+					cmd.Parameters.AddWithValue("@Country", pCountry);
+					SQLiteDataReader r = cmd.ExecuteReader();
+					while (r.Read())
+                    {
+						User u = new User();
+						u.radio_id = r.GetInt32(0);
+						u.callsign = r.GetString(1);
+						u.city = r.GetString(2);
+						u.country = r.GetString(3);
+						u.fname = r.GetString(4);
+						u.remarks = r.GetString(5);
+						u.state = r.GetString(6);
+						u.surname =	r.GetString(7);
+						pList.Add(u);
+					}
+				}
+
+			}
+			catch (Exception e)
+			{
+				MessageBox.Show(e.Message);
+			}
+			return pList;
+		}
 	}
 }

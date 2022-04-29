@@ -60,8 +60,6 @@ namespace CCS7Manager
         // Init state of the window
         private bool windowInitialized;
 
-        private Countries countries_list;
-
         // Enum list of available output CSV Format
         private enum RadioType
         {
@@ -84,7 +82,11 @@ namespace CCS7Manager
         /// Constructor for main window
         /// </summary>
         public frmPrincipal()
-        {
+        {   
+            //If source database is not initialized, we load default knowns servers
+            m_DB = new CCS7DB();
+            DBList = m_DB.GetSourceList();
+
             InitializeComponent();
             // Window Default Setting
             WindowState = FormWindowState.Normal;
@@ -144,29 +146,7 @@ namespace CCS7Manager
             }
             tb_OutputFolder.Text = Settings.Default.OutputFolder;
 
-            countries_list = new Countries();
             windowInitialized = true;
-            //If source database is not initialized, we load default knowns servers
-            if (Settings.Default.DBSourcesURL.Length == 0)
-            {
-                DBList = new StringDictionary();
-                DBList.Add("radioid", "https://database.radioid.net/static/users.json");
-                DBList.Add("theshield", "http://theshield.site/local_subscriber_ids.json");
-                Settings.Default.DBCurrentSource = "radioid";
-            }
-            else
-            {
-                using (MemoryStream ms = new MemoryStream(Convert.FromBase64String(Settings.Default.DBSourcesURL)))
-                {
-                    if (ms.Length != 0)
-                    {
-                        BinaryFormatter bf = new BinaryFormatter();
-                        DBList = (StringDictionary)bf.Deserialize(ms);
-                    }
-                }
-            }
-            m_DB = new CCS7DB();
-
         }
 
         /// <summary>
@@ -323,7 +303,7 @@ namespace CCS7Manager
         private void InitContent()
         {
             if (Settings.Default.CountriesCheckState == null) Settings.Default.CountriesCheckState = new System.Collections.Specialized.StringCollection();
-            foreach (string Country in countries_list.CountryList.Keys)
+            foreach (string Country in m_DB.GetCountryList())
             {
                 chkBoxCountries.Items.Add(Country, Settings.Default.CountriesCheckState.Contains(Country));
             }
@@ -403,6 +383,7 @@ namespace CCS7Manager
                 tsState.Text = "DOWNLOAD ERROR - PLEASE TRY AGAIN";
             }
             btnImportWeb.Enabled = true;
+            btnOpenJSON.Enabled = true;
         }
 
         /// <summary>
@@ -439,7 +420,7 @@ namespace CCS7Manager
                         u.fname = (string)o["fname"];
                         u.callsign = (string)o["callsign"];
                         u.city = (string)o["city"];
-                        u.radio_id = (string)o["id"];
+                        u.radio_id = (int)o["id"];
                         u.country = (string)o["country"];
                         u.remarks = (string)o["remarks"];
                         u.surname = (string)o["surname"];
@@ -447,6 +428,7 @@ namespace CCS7Manager
                         frmPrincipal.ul.users.Add(u);
                     }
                 }
+                m_DB.AddUsers(frmPrincipal.ul);
                 chkAllRadios.Enabled = true;
                 chkBoxCountries.Enabled = true;
                 chkListRadios.Enabled = true;
@@ -594,7 +576,7 @@ namespace CCS7Manager
                 if (chkAllCountries.Checked)
                 {
                     int num = 1;
-                    foreach (User user in ul.users)
+                    foreach (User user in m_DB.GetUserList())
                     {
                         streamWriter.WriteLine(GetRadioPattern(num, pRadio, user));
                         ++num;
@@ -603,26 +585,14 @@ namespace CCS7Manager
                 else
                 {
                     int num = 1;
-                    if (chkEmpty.Checked)
-                    {
-                        foreach (User user in ul.users.Where(Country => Country.country.Equals("")))
-                        {
-                            streamWriter.WriteLine(GetRadioPattern(num, pRadio, user));
-                            ++num;
-                        }
-                    }
                     for (int i = 0; i < chkBoxCountries.Items.Count; i++)
                     {
                         if (chkBoxCountries.GetItemChecked(i))
                         {
-
-                            foreach (string Country_Name in countries_list.CountryList[chkBoxCountries.Items[i].ToString()])
+                            foreach (User user in m_DB.GetUserListByCountry(chkBoxCountries.Items[i].ToString()))
                             {
-                                foreach (User user in ul.users.Where(Country => Country.country.Equals(Country_Name)))
-                                {
-                                    streamWriter.WriteLine(GetRadioPattern(num, pRadio, user));
-                                    ++num;
-                                }
+                                streamWriter.WriteLine(GetRadioPattern(num, pRadio, user));
+                                ++num;
                             }
                         }
                     }
@@ -646,7 +616,7 @@ namespace CCS7Manager
         private string GetRadioPattern(int pNum, RadioType pRadio, User pUser)
         {
             string Pattern="";
-            string radio_id = Sanity(pUser.radio_id);
+            string radio_id = Sanity(pUser.radio_id.ToString());
             string callsign = Sanity(pUser.callsign);
             string fname = Sanity(pUser.fname);
             string surname = Sanity(pUser.surname);
@@ -806,7 +776,7 @@ namespace CCS7Manager
             if (ul == null) return;
             if (chkAllCountries.Checked)
             {
-                Result = ul.users.Count;
+                Result = m_DB.GetUserCount();
             }
             else
             {
@@ -814,20 +784,7 @@ namespace CCS7Manager
                 {
                     if (chkBoxCountries.GetItemChecked(i))
                     {
-                        foreach (string Country_Name in countries_list.CountryList[chkBoxCountries.Items[i].ToString()])
-                        {
-                            foreach (User user in ul.users.Where(Country => Country.country.Equals(Country_Name)))
-                            {
-                                Result++;
-                            }
-                        }
-                    }
-                }
-                if (chkEmpty.Checked)
-                {
-                    foreach (User user in ul.users.Where(Country => Country.country.Equals("")))
-                    {
-                        Result++;
+                        Result += m_DB.GetCountryNumber(chkBoxCountries.Items[i].ToString());
                     }
                 }
             }
@@ -863,6 +820,8 @@ namespace CCS7Manager
                 LoadJSON(true, ofd.FileName);
                 SaveJSON();
             }
+            btnImportWeb.Enabled = true;
+            btnOpenJSON.Enabled = true;
         }
 
         private void chkEmpty_CheckedChanged(object sender, EventArgs e)

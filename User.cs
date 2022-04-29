@@ -35,7 +35,7 @@ namespace CCS7Manager
 
     public string fname { get; set; }
 
-    public string radio_id { get; set; }
+    public int radio_id { get; set; }
 
     public string remarks { get; set; }
 
