@@ -76,7 +76,7 @@ namespace CCS7Manager
 					// Create ccs7id table if not exist
 					cmd = m_DB.CreateCommand();
 					cmd.CommandType = CommandType.Text;
-					cmd.CommandText = "CREATE TABLE IF NOT EXISTS ccs7id ( Id INTEGER PRIMARY KEY, CallSign TEXT nocase, City TEXT nocase, Country TEXT nocase, FName TEXT nocase, Remarks TEXT nocase, State TEXT nocase, Surname TEXT nocase)";
+					cmd.CommandText = "CREATE TABLE IF NOT EXISTS ccs7id ( Id INTEGER PRIMARY KEY, CallSign TEXT nocase, City TEXT, Country TEXT nocase, FName TEXT, Remarks TEXT, State TEXT, Surname TEXT)";
 					cmd.ExecuteNonQuery();
 				}
 				//Test if sources table exist
@@ -100,12 +100,16 @@ namespace CCS7Manager
 			}
 			catch (SQLiteException e)
 			{
+#if DEBUG
 				MessageBox.Show(e.Message);
+#endif
 				return;
 			}
 			catch (Exception e)
 			{
+#if DEBUG
 				MessageBox.Show(e.Message);
+#endif
 				return;
 			}
 		}
@@ -130,12 +134,16 @@ namespace CCS7Manager
 			}
 			catch (SQLiteException e)
 			{
+#if DEBUG
 				MessageBox.Show(e.Message);
+#endif
 				return false;
 			}
 			catch (Exception e)
 			{
+#if DEBUG
 				MessageBox.Show(e.Message);
+#endif
 				return false;
 			}
 		}
@@ -159,7 +167,9 @@ namespace CCS7Manager
 			}
 			catch (Exception e)
 			{
+#if DEBUG
 				MessageBox.Show(e.Message);
+#endif
 			}
 			return List;
 		}
@@ -168,7 +178,7 @@ namespace CCS7Manager
 		{
 			User pUser = new User
 			{
-				radio_id = -1
+				RadioID = -1
 			};
 			try
 			{
@@ -183,21 +193,23 @@ namespace CCS7Manager
 					if (r.StepCount > 0)
 					{
 						r.Read();
-						pUser.radio_id = r.GetInt32(0);
-						pUser.callsign = r.GetString(1);
-						pUser.city = r.GetString(2);
-						pUser.country = r.GetString(3);
-						pUser.fname = r.GetString(4);
-						pUser.remarks = r.GetString(5);
-						pUser.state = r.GetString(6);
-						pUser.surname = r.GetString(7);
+						pUser.RadioID = r.GetInt32(0);
+						pUser.Callsign = r.GetString(1);
+						pUser.City = r.GetString(2);
+						pUser.Country = r.GetString(3);
+						pUser.FName = r.GetString(4);
+						pUser.Remarks = r.GetString(5);
+						pUser.State = r.GetString(6);
+						pUser.Surname = r.GetString(7);
 					}
 				}
 
 			}
 			catch (Exception e)
 			{
+#if DEBUG
 				MessageBox.Show(e.Message);
+#endif
 			}
 			return pUser;
 		}
@@ -212,28 +224,31 @@ namespace CCS7Manager
 					SQLiteCommand cmd = m_DB.CreateCommand();
 					cmd.CommandType = CommandType.Text;
 					cmd.CommandText = "SELECT * FROM ccs7id;";
-					SQLiteDataReader r = cmd.ExecuteReader();
-					while (r.Read())
+					using (SQLiteDataReader rdr = cmd.ExecuteReader())
 					{
-						User u = new User
+						while (rdr.Read())
 						{
-							radio_id = r.GetInt32(0),
-							callsign = r.GetString(1),
-							city = r.GetString(2),
-							country = r.GetString(3),
-							fname = r.GetString(4),
-							remarks = r.GetString(5),
-							state = r.GetString(6),
-							surname = r.GetString(7)
-						};
-						pList.Add(u);
+							User u = new User
+							{
+								RadioID = Convert.ToInt32(rdr["Id"]),
+								Callsign = Convert.ToString(rdr["Callsign"]),
+								City = Convert.ToString(rdr["City"]),
+								Country = Convert.ToString(rdr["Country"]),
+								FName = Convert.ToString(rdr["FName"]),
+								Remarks = Convert.ToString(rdr["Remarks"]),
+								State = Convert.ToString(rdr["State"]),
+								Surname = Convert.ToString(rdr["Surname"])
+							};
+							pList.Add(u);
+						}
 					}
 				}
-
 			}
 			catch (Exception e)
 			{
+#if DEBUG
 				MessageBox.Show(e.Message);
+#endif
 			}
 			return pList;
 		}
@@ -253,7 +268,9 @@ namespace CCS7Manager
 			}
 			catch (Exception e)
 			{
+#if DEBUG
 				MessageBox.Show(e.Message);
+#endif
 			}
 			return 0;
 		}
@@ -277,14 +294,14 @@ namespace CCS7Manager
 				cmd.Parameters.AddWithValue("@Surname", "");
 				foreach (User u in pUserList.users)
 				{
-					cmd.Parameters["@ID"].Value = u.radio_id;
-					cmd.Parameters["@Callsign"].Value = u.callsign;
-					cmd.Parameters["@City"].Value = u.city;
-					cmd.Parameters["@Country"].Value = u.country;
-					cmd.Parameters["@FName"].Value = u.fname;
-					cmd.Parameters["@Remarks"].Value = u.remarks;
-					cmd.Parameters["@State"].Value = u.state;
-					cmd.Parameters["@Surname"].Value = u.surname;
+					cmd.Parameters["@ID"].Value = u.RadioID;
+					cmd.Parameters["@Callsign"].Value = u.Callsign;
+					cmd.Parameters["@City"].Value = u.City;
+					cmd.Parameters["@Country"].Value = u.Country;
+					cmd.Parameters["@FName"].Value = u.FName;
+					cmd.Parameters["@Remarks"].Value = u.Remarks;
+					cmd.Parameters["@State"].Value = u.State;
+					cmd.Parameters["@Surname"].Value = u.Surname;
 					cmd.ExecuteNonQuery();
 				}
 				transaction.Commit();
@@ -294,12 +311,16 @@ namespace CCS7Manager
 			}
 			catch (SQLiteException e)
 			{
+#if DEBUG
 				MessageBox.Show(e.Message);
+#endif
 				return false;
 			}
 			catch (Exception e)
 			{
+#if DEBUG
 				MessageBox.Show(e.Message);
+#endif
 				return false;
 			}
 		}
@@ -314,16 +335,20 @@ namespace CCS7Manager
 					SQLiteCommand cmd = m_DB.CreateCommand();
 					cmd.CommandType = CommandType.Text;
 					cmd.CommandText = "SELECT DISTINCT Country FROM ccs7id ORDER BY Country;";
-					SQLiteDataReader r = cmd.ExecuteReader();
-					while (r.Read())
+					using (SQLiteDataReader rdr = cmd.ExecuteReader())
 					{
-						pList.Add(r.GetString(0));
+						while (rdr.Read())
+						{
+							pList.Add(Convert.ToString(rdr["Country"]));
+						}
 					}
 				}
 			}
 			catch (Exception e)
 			{
+#if DEBUG
 				MessageBox.Show(e.Message);
+#endif
 			}
 			return pList;
 
@@ -337,7 +362,7 @@ namespace CCS7Manager
 				{
 					SQLiteCommand cmd = m_DB.CreateCommand();
 					cmd.CommandType = CommandType.Text;
-					cmd.CommandText = "SELECT COUNT(*) FROM ccs7id WHERE Country like @Country;";
+					cmd.CommandText = "SELECT COUNT(*) FROM ccs7id WHERE Country = @Country;";
 					cmd.Parameters.AddWithValue("@Country", pCountry);
 					return Convert.ToInt32(cmd.ExecuteScalar());
 				}
@@ -345,7 +370,9 @@ namespace CCS7Manager
 			}
 			catch (Exception e)
 			{
+#if DEBUG
 				MessageBox.Show(e.Message);
+#endif
 			}
 			return 0;
 		}
@@ -361,28 +388,34 @@ namespace CCS7Manager
 					cmd.CommandType = CommandType.Text;
 					cmd.CommandText = "SELECT * FROM ccs7id WHERE Country like @Country;";
 					cmd.Parameters.AddWithValue("@Country", pCountry);
-					SQLiteDataReader r = cmd.ExecuteReader();
-					while (r.Read())
+					using (SQLiteDataReader rdr = cmd.ExecuteReader())
                     {
-						User u = new User
+						while (rdr.Read())
 						{
-							radio_id = r.GetInt32(0),
-							callsign = r.GetString(1),
-							city = r.GetString(2),
-							country = r.GetString(3),
-							fname = r.GetString(4),
-							remarks = r.GetString(5),
-							state = r.GetString(6),
-							surname = r.GetString(7)
-						};
-						pList.Add(u);
+							User u = new User
+							{
+
+
+								RadioID = Convert.ToInt32(rdr["Id"]),
+								Callsign = Convert.ToString(rdr["Callsign"]),
+								City = Convert.ToString(rdr["City"]),
+								Country = Convert.ToString(rdr["Country"]),
+								FName = Convert.ToString(rdr["FName"]),
+								Remarks = Convert.ToString(rdr["Remarks"]),
+								State = Convert.ToString(rdr["State"]),
+								Surname = Convert.ToString(rdr["Surname"])
+							};
+							pList.Add(u);
+						}
 					}
 				}
 
 			}
 			catch (Exception e)
 			{
+#if DEBUG
 				MessageBox.Show(e.Message);
+#endif
 			}
 			return pList;
 		}

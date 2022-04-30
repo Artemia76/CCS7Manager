@@ -27,20 +27,20 @@ namespace CCS7Manager
   [Serializable]
   internal class User
   {
-    public string callsign { get; set; }
+    public string Callsign { get; set; }
 
-    public string city { get; set; }
+    public string City { get; set; }
 
-    public string country { get; set; }
+    public string Country { get; set; }
 
-    public string fname { get; set; }
+    public string FName { get; set; }
 
-    public int radio_id { get; set; }
+    public int RadioID { get; set; }
 
-    public string remarks { get; set; }
+    public string Remarks { get; set; }
 
-    public string state { get; set; }
+    public string State { get; set; }
 
-    public string surname { get; set; }
+    public string Surname { get; set; }
   }
 }

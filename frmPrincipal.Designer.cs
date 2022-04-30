@@ -107,6 +107,7 @@ namespace CCS7Manager
             this.chkAllCountries.TabIndex = 1;
             this.chkAllCountries.Text = "ALL";
             this.chkAllCountries.UseVisualStyleBackColor = true;
+            this.chkAllCountries.CheckedChanged += new System.EventHandler(this.chkAllCountries_CheckedChanged);
             // 
             // chkBoxCountries
             // 
@@ -180,7 +181,6 @@ namespace CCS7Manager
             // chkAllRadios
             // 
             this.chkAllRadios.AutoSize = true;
-            this.chkAllRadios.Enabled = false;
             this.chkAllRadios.Location = new System.Drawing.Point(7, 221);
             this.chkAllRadios.Name = "chkAllRadios";
             this.chkAllRadios.Size = new System.Drawing.Size(45, 17);
@@ -192,7 +192,6 @@ namespace CCS7Manager
             // chkListRadios
             // 
             this.chkListRadios.CheckOnClick = true;
-            this.chkListRadios.Enabled = false;
             this.chkListRadios.FormattingEnabled = true;
             this.chkListRadios.Location = new System.Drawing.Point(7, 20);
             this.chkListRadios.Name = "chkListRadios";

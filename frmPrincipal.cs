@@ -290,16 +290,24 @@ namespace CCS7Manager
           InitContent();
         }
 
+        private void RefreshCountryList ()
+        {
+            if (Settings.Default.CountriesCheckState == null) Settings.Default.CountriesCheckState = new StringCollection();
+            chkBoxCountries.Items.Clear();
+            foreach (string Country in m_DB.GetCountryList())
+            {
+                chkBoxCountries.Items.Add(Country, Settings.Default.CountriesCheckState.Contains(Country));
+            }
+            chkAllCountries.Enabled = true;
+            chkBoxCountries.Enabled = true;
+        }
+
         /// <summary>
         /// Init all contenair on main window
         /// </summary>
         private void InitContent()
         {
-            if (Settings.Default.CountriesCheckState == null) Settings.Default.CountriesCheckState = new StringCollection();
-            foreach (string Country in m_DB.GetCountryList())
-            {
-                chkBoxCountries.Items.Add(Country, Settings.Default.CountriesCheckState.Contains(Country));
-            }
+            RefreshCountryList();
 
             // Populate Radio List ChecBox
             chkListRadios.Items.Add("Ailunce HD1");
@@ -375,6 +383,7 @@ namespace CCS7Manager
         /// <summary>
         /// Decode the JSON file to the user list
         /// </summary>
+        /// <param name="pJSONContent"></param>
         /// <returns></returns>
         private bool ReadCCS7UserList(string pJSONContent)
         {
@@ -399,16 +408,16 @@ namespace CCS7Manager
                     {
                         User u = new User
                         {
-                            fname = (string)o["fname"],
-                            callsign = (string)o["callsign"],
-                            city = (string)o["city"],
-                            radio_id = (int)o["id"],
-                            country = (string)o["country"],
-                            remarks = (string)o["remarks"],
-                            surname = (string)o["surname"],
-                            state = (string)o["state"]
+                            FName = (string)o["fname"],
+                            Callsign = (string)o["callsign"],
+                            City = (string)o["city"],
+                            RadioID = (int)o["id"],
+                            Country = (string)o["country"],
+                            Remarks = (string)o["remarks"],
+                            Surname = (string)o["surname"],
+                            State = (string)o["state"]
                         };
-                        if (u.country.Length > 0)
+                        if (u.Country.Length > 0)
                             ul.users.Add(u);
                     }
                 }
@@ -421,6 +430,7 @@ namespace CCS7Manager
                 btnImportWeb.Text = "Update";
                 btnOpenJSON.Enabled = true;
                 btnImportWeb.Enabled = true;
+                RefreshCountryList();
                 UpdateContactSelected();
                 return true;
             }
@@ -601,14 +611,14 @@ namespace CCS7Manager
         private string GetRadioPattern(int pNum, RadioType pRadio, User pUser)
         {
             string Pattern="";
-            string radio_id = Sanity(pUser.radio_id.ToString());
-            string callsign = Sanity(pUser.callsign);
-            string fname = Sanity(pUser.fname);
-            string surname = Sanity(pUser.surname);
-            string city = Sanity(pUser.city);
-            string state = Sanity(pUser.state);
-            string country = Sanity(pUser.country);
-            string remarks = Sanity(pUser.remarks);
+            string radio_id = Sanity(pUser.RadioID.ToString());
+            string callsign = Sanity(pUser.Callsign);
+            string fname = Sanity(pUser.FName);
+            string surname = Sanity(pUser.Surname);
+            string city = Sanity(pUser.City);
+            string state = Sanity(pUser.State);
+            string country = Sanity(pUser.Country);
+            string remarks = Sanity(pUser.Remarks);
             switch (pRadio)
             {
                 case RadioType.AnyTone:
@@ -665,7 +675,7 @@ namespace CCS7Manager
             {
                 path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) +
                 Path.DirectorySeparatorChar +
-                System.Reflection.Assembly.GetExecutingAssembly().GetName().Name +
+                Assembly.GetExecutingAssembly().GetName().Name +
                 Path.DirectorySeparatorChar +
                 "users.json";
             }
@@ -691,31 +701,36 @@ namespace CCS7Manager
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void SaveJSON()
+        private void SaveJSON(string pPath = "")
         {
-            var sfd = new SaveFileDialog
+            string path;
+            if (pPath == "")
             {
-                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Personal),
-                Filter = "JSON files (*.json)|*.json|All file (*.*)|*.*",
-                FilterIndex = 0
-            };
-            FileInfo fileInfo = new FileInfo(sfd.FileName);
+                path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) +
+                Path.DirectorySeparatorChar +
+                Assembly.GetExecutingAssembly().GetName().Name +
+                Path.DirectorySeparatorChar +
+                "users.json";
+            }
+            else
+            {
+                path = pPath;
+            }
+            FileInfo fileInfo = new FileInfo(path);
             if (!fileInfo.Directory.Exists)
                 fileInfo.Directory.Create();
             if (fileInfo.Exists)
             {
-                File.Delete(sfd.FileName);
+                File.Delete(path);
             }
-            UserList ul = new UserList
-            {
-                users = new List<User>()
-            };
+            UserList ul = new UserList ();
             if (chkAllCountries.Checked)
             {
                 ul.users = m_DB.GetUserList();
             }
             else
             {
+                ul.users = new List<User> ();
                 for (int i = 0; i < chkBoxCountries.Items.Count; i++)
                 {
                     if (chkBoxCountries.GetItemChecked(i))
@@ -724,7 +739,7 @@ namespace CCS7Manager
                     }
                 }
             }
-            File.WriteAllText(sfd.FileName, JsonConvert.SerializeObject(ul));
+            File.WriteAllText(path, JsonConvert.SerializeObject(ul));
         }
 
         /// <summary>
@@ -780,6 +795,16 @@ namespace CCS7Manager
                 }
             }
             lblContactSelected.Text = string.Format("Contacts Selected : {0}", Result);
+            if (Result> 0)
+            {
+                btnExport.Enabled = true;
+                btnSaveJSON.Enabled = true;
+            }
+            else
+            {
+                btnExport.Enabled = false;
+                btnSaveJSON.Enabled = false;
+            }
         }
 
         /// <summary>
@@ -820,13 +845,31 @@ namespace CCS7Manager
 
         private void btnSaveJSON_Click(object sender, EventArgs e)
         {
-            btnImportWeb.Enabled = false;
-            btnOpenJSON.Enabled = false;
+            var sfd = new SaveFileDialog
+            {
+                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Personal),
+                Filter = "JSON files (*.json)|*.json|All file (*.*)|*.*",
+                FilterIndex = 0
+            };
             btnSaveJSON.Enabled = false;
-            SaveJSON();
-            btnImportWeb.Enabled = true;
-            btnOpenJSON.Enabled = true;
+            if (sfd.ShowDialog() == DialogResult.OK)
+            {
+                SaveJSON(sfd.FileName);
+            }
             btnSaveJSON.Enabled = true;
+        }
+
+        private void chkAllCountries_CheckedChanged(object sender, EventArgs e)
+        {
+            if (this.chkAllCountries.Checked)
+            {
+                this.chkBoxCountries.Enabled = false;
+            }
+            else
+            {
+                this.chkBoxCountries.Enabled = true;
+            }
+            UpdateContactSelected();
         }
     }
 }
