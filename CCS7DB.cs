@@ -166,8 +166,10 @@ namespace CCS7Manager
 
 		public User GetUser(int pId)
 		{
-			User pUser = new User();
-			pUser.radio_id = -1;
+			User pUser = new User
+			{
+				radio_id = -1
+			};
 			try
 			{
 				if (m_DB != null)
@@ -213,15 +215,17 @@ namespace CCS7Manager
 					SQLiteDataReader r = cmd.ExecuteReader();
 					while (r.Read())
 					{
-						User u = new User();
-						u.radio_id = r.GetInt32(0);
-						u.callsign = r.GetString(1);
-						u.city = r.GetString(2);
-						u.country = r.GetString(3);
-						u.fname = r.GetString(4);
-						u.remarks = r.GetString(5);
-						u.state = r.GetString(6);
-						u.surname = r.GetString(7);
+						User u = new User
+						{
+							radio_id = r.GetInt32(0),
+							callsign = r.GetString(1),
+							city = r.GetString(2),
+							country = r.GetString(3),
+							fname = r.GetString(4),
+							remarks = r.GetString(5),
+							state = r.GetString(6),
+							surname = r.GetString(7)
+						};
 						pList.Add(u);
 					}
 				}
@@ -360,15 +364,17 @@ namespace CCS7Manager
 					SQLiteDataReader r = cmd.ExecuteReader();
 					while (r.Read())
                     {
-						User u = new User();
-						u.radio_id = r.GetInt32(0);
-						u.callsign = r.GetString(1);
-						u.city = r.GetString(2);
-						u.country = r.GetString(3);
-						u.fname = r.GetString(4);
-						u.remarks = r.GetString(5);
-						u.state = r.GetString(6);
-						u.surname =	r.GetString(7);
+						User u = new User
+						{
+							radio_id = r.GetInt32(0),
+							callsign = r.GetString(1),
+							city = r.GetString(2),
+							country = r.GetString(3),
+							fname = r.GetString(4),
+							remarks = r.GetString(5),
+							state = r.GetString(6),
+							surname = r.GetString(7)
+						};
 						pList.Add(u);
 					}
 				}

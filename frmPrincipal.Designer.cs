@@ -69,7 +69,7 @@ namespace CCS7Manager
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.cbDatabaseList = new System.Windows.Forms.ComboBox();
             this.btnOpenJSON = new System.Windows.Forms.Button();
-            this.chkEmpty = new System.Windows.Forms.CheckBox();
+            this.btnSaveJSON = new System.Windows.Forms.Button();
             this.groupBox2.SuspendLayout();
             this.stBar.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -78,7 +78,6 @@ namespace CCS7Manager
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.chkEmpty);
             this.groupBox2.Controls.Add(this.lblContactSelected);
             this.groupBox2.Controls.Add(this.chkAllCountries);
             this.groupBox2.Controls.Add(this.chkBoxCountries);
@@ -108,7 +107,6 @@ namespace CCS7Manager
             this.chkAllCountries.TabIndex = 1;
             this.chkAllCountries.Text = "ALL";
             this.chkAllCountries.UseVisualStyleBackColor = true;
-            this.chkAllCountries.CheckedChanged += new System.EventHandler(this.chkAllCountries_CheckedChanged);
             // 
             // chkBoxCountries
             // 
@@ -119,7 +117,7 @@ namespace CCS7Manager
             this.chkBoxCountries.Name = "chkBoxCountries";
             this.chkBoxCountries.Size = new System.Drawing.Size(217, 169);
             this.chkBoxCountries.TabIndex = 0;
-            this.chkBoxCountries.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.chkBoxCountries_ItemCheck);
+            this.chkBoxCountries.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.ChkBoxCountries_ItemCheck);
             // 
             // btnImportWeb
             // 
@@ -127,7 +125,7 @@ namespace CCS7Manager
             this.btnImportWeb.Name = "btnImportWeb";
             this.btnImportWeb.Size = new System.Drawing.Size(98, 23);
             this.btnImportWeb.TabIndex = 2;
-            this.btnImportWeb.Text = "Download";
+            this.btnImportWeb.Text = "Update";
             this.btnImportWeb.UseVisualStyleBackColor = true;
             this.btnImportWeb.Click += new System.EventHandler(this.BtnImportWeb_Click);
             // 
@@ -166,7 +164,7 @@ namespace CCS7Manager
             this.btnExport.TabIndex = 4;
             this.btnExport.Text = "Export CSV";
             this.btnExport.UseVisualStyleBackColor = true;
-            this.btnExport.Click += new System.EventHandler(this.btnExport_Click);
+            this.btnExport.Click += new System.EventHandler(this.BtnExport_Click);
             // 
             // groupBox1
             // 
@@ -209,7 +207,7 @@ namespace CCS7Manager
             this.btnOutputFolder.TabIndex = 10;
             this.btnOutputFolder.Text = "Output Folder";
             this.btnOutputFolder.UseVisualStyleBackColor = true;
-            this.btnOutputFolder.Click += new System.EventHandler(this.btnOutputFolder_Click);
+            this.btnOutputFolder.Click += new System.EventHandler(this.BtnOutputFolder_Click);
             // 
             // tb_OutputFolder
             // 
@@ -257,25 +255,25 @@ namespace CCS7Manager
             this.btnOpenJSON.TabIndex = 13;
             this.btnOpenJSON.Text = "Open JSON";
             this.btnOpenJSON.UseVisualStyleBackColor = true;
-            this.btnOpenJSON.Click += new System.EventHandler(this.btnOpenJSON_Click);
+            this.btnOpenJSON.Click += new System.EventHandler(this.BtnOpenJSON_Click);
             // 
-            // chkEmpty
+            // btnSaveJSON
             // 
-            this.chkEmpty.AutoSize = true;
-            this.chkEmpty.Enabled = false;
-            this.chkEmpty.Location = new System.Drawing.Point(70, 194);
-            this.chkEmpty.Name = "chkEmpty";
-            this.chkEmpty.Size = new System.Drawing.Size(79, 17);
-            this.chkEmpty.TabIndex = 3;
-            this.chkEmpty.Text = "No Country";
-            this.chkEmpty.UseVisualStyleBackColor = true;
-            this.chkEmpty.CheckedChanged += new System.EventHandler(this.chkEmpty_CheckedChanged);
+            this.btnSaveJSON.Enabled = false;
+            this.btnSaveJSON.Location = new System.Drawing.Point(481, 265);
+            this.btnSaveJSON.Name = "btnSaveJSON";
+            this.btnSaveJSON.Size = new System.Drawing.Size(87, 23);
+            this.btnSaveJSON.TabIndex = 14;
+            this.btnSaveJSON.Text = "Export JSON";
+            this.btnSaveJSON.UseVisualStyleBackColor = true;
+            this.btnSaveJSON.Click += new System.EventHandler(this.btnSaveJSON_Click);
             // 
             // frmPrincipal
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(650, 393);
+            this.Controls.Add(this.btnSaveJSON);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.tb_OutputFolder);
             this.Controls.Add(this.btnOutputFolder);
@@ -326,6 +324,6 @@ namespace CCS7Manager
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.ComboBox cbDatabaseList;
         private System.Windows.Forms.Button btnOpenJSON;
-        private System.Windows.Forms.CheckBox chkEmpty;
+        private System.Windows.Forms.Button btnSaveJSON;
     }
 }

@@ -31,7 +31,6 @@ using System;
 using System.Configuration;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Text;
@@ -49,16 +48,14 @@ namespace CCS7Manager
     /// </summary>
     public partial class frmPrincipal : Form
     {
-        private StringDictionary DBList;
+        private readonly StringDictionary DBList;
 
-        private static UserList ul;
+        private readonly CCS7DB m_DB;
 
-        private CCS7DB m_DB;
-
-        private ApplicationSettingsBase settings;
+        private readonly ApplicationSettingsBase settings;
 
         // Init state of the window
-        private bool windowInitialized;
+        private readonly bool windowInitialized;
 
         // Enum list of available output CSV Format
         private enum RadioType
@@ -74,9 +71,6 @@ namespace CCS7Manager
             DVPI,
             PISTAR
         }
-
-        // String container for JSON File
-        private String JsonContent;
 
         /// <summary>
         /// Constructor for main window
@@ -283,7 +277,6 @@ namespace CCS7Manager
                 ms.Read(buffer, 0, buffer.Length);
                 Settings.Default.DBSourcesURL = Convert.ToBase64String(buffer);
             }
-            Settings.Default.NoCountry = chkEmpty.Checked;
             // Backup configuration
             Settings.Default.Save();
         }
@@ -302,7 +295,7 @@ namespace CCS7Manager
         /// </summary>
         private void InitContent()
         {
-            if (Settings.Default.CountriesCheckState == null) Settings.Default.CountriesCheckState = new System.Collections.Specialized.StringCollection();
+            if (Settings.Default.CountriesCheckState == null) Settings.Default.CountriesCheckState = new StringCollection();
             foreach (string Country in m_DB.GetCountryList())
             {
                 chkBoxCountries.Items.Add(Country, Settings.Default.CountriesCheckState.Contains(Country));
@@ -320,16 +313,11 @@ namespace CCS7Manager
             chkListRadios.Items.Add("DVPi");
             chkListRadios.Items.Add("PI-Star");
 
-            //Load the cached JSON File if exist
-            LoadJSON(true);
-
             //Load Database source list
             cbDatabaseList.DataSource = new BindingSource(DBList, null);
             cbDatabaseList.DisplayMember = "Key";
             cbDatabaseList.ValueMember = "Value";
             cbDatabaseList.SelectedIndex = cbDatabaseList.FindString(Settings.Default.DBCurrentSource);
-
-            chkEmpty.Checked = Settings.Default.NoCountry;
         }
     
         /// <summary>
@@ -370,12 +358,10 @@ namespace CCS7Manager
         {
             if (!e.Cancelled && e.Error == null)
             {
-                JsonContent = (string)e.Result;
-                if (ReadCCS7UserList())
+                if (ReadCCS7UserList(e.Result))
                 {
                     tsState.Text = "DOWNLOAD COMPLETED";
                     lblVersionDate.Text = "Version Date : " + DateTime.Now.ToShortDateString();
-                    SaveJSON();
                 }
             }
             else
@@ -390,50 +376,47 @@ namespace CCS7Manager
         /// Decode the JSON file to the user list
         /// </summary>
         /// <returns></returns>
-        private bool ReadCCS7UserList()
+        private bool ReadCCS7UserList(string pJSONContent)
         {
+            UserList ul;
             try
             {
                 //if it standard Serialized JSON from this app
-                if (JsonContent.StartsWith("{\"users\":[{"))
+                if (pJSONContent.StartsWith("{\"users\":[{"))
                 {
-                    frmPrincipal.ul = JsonConvert.DeserializeObject<UserList>(JsonContent);
+                    ul = JsonConvert.DeserializeObject<UserList>(pJSONContent);
                 }
                 // Else we need to parse the unknown Json Format
                 else
                 {
-                    if (frmPrincipal.ul != null)
+                    ul = new UserList
                     {
-                        frmPrincipal.ul.users.Clear();
-                    }
-                    else
-                    {
-                        frmPrincipal.ul = new UserList();
-                        frmPrincipal.ul.users = new List<User>();
-                    }
-
-                    JObject jo = JObject.Parse(JsonContent);
+                        users = new List<User>()
+                    };
+                    JObject jo = JObject.Parse(pJSONContent);
                     JArray ja = (JArray)jo["results"];
                     foreach (JObject o in ja)
                     {
-                        User u = new User();
-                        u.fname = (string)o["fname"];
-                        u.callsign = (string)o["callsign"];
-                        u.city = (string)o["city"];
-                        u.radio_id = (int)o["id"];
-                        u.country = (string)o["country"];
-                        u.remarks = (string)o["remarks"];
-                        u.surname = (string)o["surname"];
-                        u.state = (string)o["state"];
-                        frmPrincipal.ul.users.Add(u);
+                        User u = new User
+                        {
+                            fname = (string)o["fname"],
+                            callsign = (string)o["callsign"],
+                            city = (string)o["city"],
+                            radio_id = (int)o["id"],
+                            country = (string)o["country"],
+                            remarks = (string)o["remarks"],
+                            surname = (string)o["surname"],
+                            state = (string)o["state"]
+                        };
+                        if (u.country.Length > 0)
+                            ul.users.Add(u);
                     }
                 }
-                m_DB.AddUsers(frmPrincipal.ul);
+                m_DB.AddUsers(ul);
                 chkAllRadios.Enabled = true;
                 chkBoxCountries.Enabled = true;
                 chkListRadios.Enabled = true;
                 chkAllCountries.Enabled = true;
-                chkEmpty.Enabled = true;
                 btnExport.Enabled = true;
                 btnImportWeb.Text = "Update";
                 btnOpenJSON.Enabled = true;
@@ -443,7 +426,9 @@ namespace CCS7Manager
             }
             catch (Exception ex)
             {
-                int num = (int)MessageBox.Show(ex.Message.ToString());
+#if DEBUG
+                MessageBox.Show(ex.Message.ToString());
+#endif
             }
             return false;
         }
@@ -476,7 +461,7 @@ namespace CCS7Manager
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void btnExport_Click(object sender, EventArgs e)
+        private void BtnExport_Click(object sender, EventArgs e)
         {
             if (chkAllRadios.Checked)
             {
@@ -602,7 +587,7 @@ namespace CCS7Manager
             }
             catch (Exception ex)
             {
-                int num = (int)MessageBox.Show(ex.Message.ToString());
+                MessageBox.Show(ex.Message.ToString());
             }
         }
 
@@ -691,8 +676,7 @@ namespace CCS7Manager
             FileInfo fileInfo = new FileInfo(path);
             if (fileInfo.Exists)
             {
-                JsonContent = File.ReadAllText(path);
-                if (ReadCCS7UserList())
+                if (ReadCCS7UserList(File.ReadAllText(path)))
                 {
                     tsState.Text = "LOADING COMPLETED";
                 }
@@ -709,30 +693,38 @@ namespace CCS7Manager
         /// <param name="e"></param>
         private void SaveJSON()
         {
-            string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) +
-                Path.DirectorySeparatorChar +
-                System.Reflection.Assembly.GetExecutingAssembly().GetName().Name +
-                Path.DirectorySeparatorChar +
-                "users.json";
-            FileInfo fileInfo = new FileInfo(path);
+            var sfd = new SaveFileDialog
+            {
+                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Personal),
+                Filter = "JSON files (*.json)|*.json|All file (*.*)|*.*",
+                FilterIndex = 0
+            };
+            FileInfo fileInfo = new FileInfo(sfd.FileName);
             if (!fileInfo.Directory.Exists)
                 fileInfo.Directory.Create();
             if (fileInfo.Exists)
             {
-                File.Delete(path);
+                File.Delete(sfd.FileName);
             }
-            File.WriteAllText(path, JsonConvert.SerializeObject(ul));
-        }
-
-        /// <summary>
-        /// Checkbox select all countries change state
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void chkAllCountries_CheckedChanged(object sender, EventArgs e)
-        {
-            chkBoxCountries.Enabled = !chkAllCountries.Checked;
-            UpdateContactSelected();
+            UserList ul = new UserList
+            {
+                users = new List<User>()
+            };
+            if (chkAllCountries.Checked)
+            {
+                ul.users = m_DB.GetUserList();
+            }
+            else
+            {
+                for (int i = 0; i < chkBoxCountries.Items.Count; i++)
+                {
+                    if (chkBoxCountries.GetItemChecked(i))
+                    {
+                        ul.users.AddRange(m_DB.GetUserListByCountry(chkBoxCountries.Items[i].ToString()));
+                    }
+                }
+            }
+            File.WriteAllText(sfd.FileName, JsonConvert.SerializeObject(ul));
         }
 
         /// <summary>
@@ -740,7 +732,7 @@ namespace CCS7Manager
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void btnOutputFolder_Click(object sender, EventArgs e)
+        private void BtnOutputFolder_Click(object sender, EventArgs e)
         {
             using (var sfd = new FolderBrowserDialog())
             {
@@ -762,7 +754,7 @@ namespace CCS7Manager
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void chkBoxCountries_ItemCheck(object sender, ItemCheckEventArgs e)
+        private void ChkBoxCountries_ItemCheck(object sender, ItemCheckEventArgs e)
         {
             BeginInvoke((MethodInvoker)(() => UpdateContactSelected()));
         }
@@ -773,7 +765,6 @@ namespace CCS7Manager
         private void UpdateContactSelected ()
         {
             int Result=0;
-            if (ul == null) return;
             if (chkAllCountries.Checked)
             {
                 Result = m_DB.GetUserCount();
@@ -807,26 +798,35 @@ namespace CCS7Manager
             return result;
         }
 
-        private void btnOpenJSON_Click(object sender, EventArgs e)
+        private void BtnOpenJSON_Click(object sender, EventArgs e)
         {
-            var ofd = new OpenFileDialog();
-            ofd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
-            ofd.Filter = "JSON files (*.json)|*.json|All file (*.*)|*.*";
-            ofd.FilterIndex = 0;
+            var ofd = new OpenFileDialog
+            {
+                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Personal),
+                Filter = "JSON files (*.json)|*.json|All file (*.*)|*.*",
+                FilterIndex = 0
+            };
             btnImportWeb.Enabled = false;
             btnOpenJSON.Enabled = false;
+            btnSaveJSON.Enabled = false;
             if (ofd.ShowDialog() == DialogResult.OK)
             {
                 LoadJSON(true, ofd.FileName);
-                SaveJSON();
             }
             btnImportWeb.Enabled = true;
             btnOpenJSON.Enabled = true;
+            btnSaveJSON.Enabled = true;
         }
 
-        private void chkEmpty_CheckedChanged(object sender, EventArgs e)
+        private void btnSaveJSON_Click(object sender, EventArgs e)
         {
-            UpdateContactSelected();
+            btnImportWeb.Enabled = false;
+            btnOpenJSON.Enabled = false;
+            btnSaveJSON.Enabled = false;
+            SaveJSON();
+            btnImportWeb.Enabled = true;
+            btnOpenJSON.Enabled = true;
+            btnSaveJSON.Enabled = true;
         }
     }
 }
