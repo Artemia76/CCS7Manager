@@ -17,3 +17,5 @@ ChangeLog:
 1.0.7 : Add Pi-Star export to .dat file
 
 1.0.8 : Bug fixe on CSV export
+
+1.1.0 : Replace json cache by sqlite database. Can merge severals databases.

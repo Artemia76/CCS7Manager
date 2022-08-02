@@ -37,7 +37,6 @@ using System.Text;
 using System.Windows.Forms;
 using System.Collections.Specialized;
 using System.Collections.Generic;
-using System.Runtime.Serialization.Formatters.Binary;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 
@@ -268,15 +267,6 @@ namespace CCS7Manager
             }
             //Check the Database source 
             Settings.Default.DBCurrentSource = cbDatabaseList.SelectedText;
-            using (MemoryStream ms = new MemoryStream())
-            {
-                BinaryFormatter bf = new BinaryFormatter();
-                bf.Serialize(ms, DBList);
-                ms.Position = 0;
-                byte[] buffer = new byte[(int)ms.Length];
-                ms.Read(buffer, 0, buffer.Length);
-                Settings.Default.DBSourcesURL = Convert.ToBase64String(buffer);
-            }
             // Backup configuration
             Settings.Default.Save();
         }
@@ -369,7 +359,6 @@ namespace CCS7Manager
                 if (ReadCCS7UserList(e.Result))
                 {
                     tsState.Text = "DOWNLOAD COMPLETED";
-                    lblVersionDate.Text = "Version Date : " + DateTime.Now.ToShortDateString();
                 }
             }
             else
@@ -690,7 +679,6 @@ namespace CCS7Manager
                 {
                     tsState.Text = "LOADING COMPLETED";
                 }
-                lblVersionDate.Text = "Version Date : " + fileInfo.LastWriteTime.ToShortDateString();
             }
             else
                 if (!Silent) MessageBox.Show("Fail to open users.json file");

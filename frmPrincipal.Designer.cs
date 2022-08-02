@@ -65,7 +65,6 @@ namespace CCS7Manager
             this.chkListRadios = new System.Windows.Forms.CheckedListBox();
             this.btnOutputFolder = new System.Windows.Forms.Button();
             this.tb_OutputFolder = new System.Windows.Forms.TextBox();
-            this.lblVersionDate = new System.Windows.Forms.Label();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.cbDatabaseList = new System.Windows.Forms.ComboBox();
             this.btnOpenJSON = new System.Windows.Forms.Button();
@@ -216,21 +215,11 @@ namespace CCS7Manager
             this.tb_OutputFolder.Size = new System.Drawing.Size(241, 20);
             this.tb_OutputFolder.TabIndex = 11;
             // 
-            // lblVersionDate
-            // 
-            this.lblVersionDate.AutoSize = true;
-            this.lblVersionDate.Location = new System.Drawing.Point(6, 88);
-            this.lblVersionDate.Name = "lblVersionDate";
-            this.lblVersionDate.Size = new System.Drawing.Size(85, 13);
-            this.lblVersionDate.TabIndex = 12;
-            this.lblVersionDate.Text = "No File in Cache";
-            // 
             // groupBox3
             // 
             this.groupBox3.Controls.Add(this.cbDatabaseList);
             this.groupBox3.Controls.Add(this.btnOpenJSON);
             this.groupBox3.Controls.Add(this.btnImportWeb);
-            this.groupBox3.Controls.Add(this.lblVersionDate);
             this.groupBox3.Location = new System.Drawing.Point(12, 256);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(229, 104);
@@ -298,7 +287,6 @@ namespace CCS7Manager
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox3.ResumeLayout(false);
-            this.groupBox3.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -318,7 +306,6 @@ namespace CCS7Manager
         private System.Windows.Forms.ToolStripStatusLabel tsState;
         private System.Windows.Forms.Button btnOutputFolder;
         private System.Windows.Forms.TextBox tb_OutputFolder;
-        private System.Windows.Forms.Label lblVersionDate;
         private System.Windows.Forms.Label lblContactSelected;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.ComboBox cbDatabaseList;

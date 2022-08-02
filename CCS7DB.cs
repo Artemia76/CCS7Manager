@@ -93,7 +93,6 @@ namespace CCS7Manager
 					cmd.ExecuteNonQuery();
 
 					AddSource("RadioID", "Official DMR id from RA community", "https://database.radioid.net/static/users.json");
-					AddSource("TheShield", "The Shield Community of Amateur Radio", "http://theshield.site/local_subscriber_ids.json");
 				}
 				m_Initialized = true;
 				return;
@@ -150,7 +149,7 @@ namespace CCS7Manager
 
 		public StringDictionary GetSourceList()
 		{
-			StringDictionary List = new StringDictionary();
+			StringDictionary List = new StringDictionary() ;
 			try
 			{
 				if (m_DB != null)
