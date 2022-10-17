@@ -69,6 +69,7 @@ namespace CCS7Manager
             this.cbDatabaseList = new System.Windows.Forms.ComboBox();
             this.btnOpenJSON = new System.Windows.Forms.Button();
             this.btnSaveJSON = new System.Windows.Forms.Button();
+            this.btnEditList = new System.Windows.Forms.Button();
             this.groupBox2.SuspendLayout();
             this.stBar.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -82,7 +83,7 @@ namespace CCS7Manager
             this.groupBox2.Controls.Add(this.chkBoxCountries);
             this.groupBox2.Location = new System.Drawing.Point(12, 12);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(229, 238);
+            this.groupBox2.Size = new System.Drawing.Size(308, 238);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Country";
@@ -115,13 +116,13 @@ namespace CCS7Manager
             this.chkBoxCountries.FormattingEnabled = true;
             this.chkBoxCountries.Location = new System.Drawing.Point(6, 19);
             this.chkBoxCountries.Name = "chkBoxCountries";
-            this.chkBoxCountries.Size = new System.Drawing.Size(217, 169);
+            this.chkBoxCountries.Size = new System.Drawing.Size(293, 169);
             this.chkBoxCountries.TabIndex = 0;
             this.chkBoxCountries.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.ChkBoxCountries_ItemCheck);
             // 
             // btnImportWeb
             // 
-            this.btnImportWeb.Location = new System.Drawing.Point(125, 57);
+            this.btnImportWeb.Location = new System.Drawing.Point(113, 57);
             this.btnImportWeb.Name = "btnImportWeb";
             this.btnImportWeb.Size = new System.Drawing.Size(98, 23);
             this.btnImportWeb.TabIndex = 2;
@@ -217,12 +218,13 @@ namespace CCS7Manager
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.btnEditList);
             this.groupBox3.Controls.Add(this.cbDatabaseList);
             this.groupBox3.Controls.Add(this.btnOpenJSON);
             this.groupBox3.Controls.Add(this.btnImportWeb);
             this.groupBox3.Location = new System.Drawing.Point(12, 256);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(229, 104);
+            this.groupBox3.Size = new System.Drawing.Size(308, 104);
             this.groupBox3.TabIndex = 13;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Database ";
@@ -255,6 +257,16 @@ namespace CCS7Manager
             this.btnSaveJSON.Text = "Export JSON";
             this.btnSaveJSON.UseVisualStyleBackColor = true;
             this.btnSaveJSON.Click += new System.EventHandler(this.btnSaveJSON_Click);
+            // 
+            // btnEditList
+            // 
+            this.btnEditList.Location = new System.Drawing.Point(229, 20);
+            this.btnEditList.Name = "btnEditList";
+            this.btnEditList.Size = new System.Drawing.Size(70, 23);
+            this.btnEditList.TabIndex = 15;
+            this.btnEditList.Text = "Manage";
+            this.btnEditList.UseVisualStyleBackColor = true;
+            this.btnEditList.Click += new System.EventHandler(this.button1_Click);
             // 
             // frmPrincipal
             // 
@@ -311,5 +323,6 @@ namespace CCS7Manager
         private System.Windows.Forms.ComboBox cbDatabaseList;
         private System.Windows.Forms.Button btnOpenJSON;
         private System.Windows.Forms.Button btnSaveJSON;
+        private System.Windows.Forms.Button btnEditList;
     }
 }

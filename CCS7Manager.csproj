@@ -97,6 +97,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CCS7DB.cs" />
+    <Compile Include="dlgConServeur.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dlgConServeur.Designer.cs">
+      <DependentUpon>dlgConServeur.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmPrincipal.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -116,6 +122,9 @@
     <Compile Include="AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="dlgConServeur.resx">
+      <DependentUpon>dlgConServeur.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="frmPrincipal.resx" />
     <EmbeddedResource Include="Properties\Resources.resx" />
   </ItemGroup>

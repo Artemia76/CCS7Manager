@@ -879,5 +879,12 @@ namespace CCS7Manager
             }
             UpdateContactSelected();
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            DialogResult Result;
+            dlgConServeur DatabaseLst = new dlgConServeur();
+            Result = DatabaseLst.ShowDialog();
+        }
     }
 }
