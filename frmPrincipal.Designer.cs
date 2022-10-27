@@ -66,10 +66,10 @@ namespace CCS7Manager
             this.btnOutputFolder = new System.Windows.Forms.Button();
             this.tb_OutputFolder = new System.Windows.Forms.TextBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.btnEditList = new System.Windows.Forms.Button();
             this.cbDatabaseList = new System.Windows.Forms.ComboBox();
             this.btnOpenJSON = new System.Windows.Forms.Button();
             this.btnSaveJSON = new System.Windows.Forms.Button();
-            this.btnEditList = new System.Windows.Forms.Button();
             this.groupBox2.SuspendLayout();
             this.stBar.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -81,6 +81,7 @@ namespace CCS7Manager
             this.groupBox2.Controls.Add(this.lblContactSelected);
             this.groupBox2.Controls.Add(this.chkAllCountries);
             this.groupBox2.Controls.Add(this.chkBoxCountries);
+            this.groupBox2.ForeColor = System.Drawing.Color.White;
             this.groupBox2.Location = new System.Drawing.Point(12, 12);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(308, 238);
@@ -122,12 +123,14 @@ namespace CCS7Manager
             // 
             // btnImportWeb
             // 
+            this.btnImportWeb.BackColor = System.Drawing.Color.DodgerBlue;
+            this.btnImportWeb.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnImportWeb.Location = new System.Drawing.Point(113, 57);
             this.btnImportWeb.Name = "btnImportWeb";
             this.btnImportWeb.Size = new System.Drawing.Size(98, 23);
             this.btnImportWeb.TabIndex = 2;
             this.btnImportWeb.Text = "Update";
-            this.btnImportWeb.UseVisualStyleBackColor = true;
+            this.btnImportWeb.UseVisualStyleBackColor = false;
             this.btnImportWeb.Click += new System.EventHandler(this.BtnImportWeb_Click);
             // 
             // stBar
@@ -158,19 +161,22 @@ namespace CCS7Manager
             // 
             // btnExport
             // 
+            this.btnExport.BackColor = System.Drawing.Color.DodgerBlue;
             this.btnExport.Enabled = false;
+            this.btnExport.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnExport.Location = new System.Drawing.Point(388, 265);
             this.btnExport.Name = "btnExport";
             this.btnExport.Size = new System.Drawing.Size(87, 23);
             this.btnExport.TabIndex = 4;
             this.btnExport.Text = "Export CSV";
-            this.btnExport.UseVisualStyleBackColor = true;
+            this.btnExport.UseVisualStyleBackColor = false;
             this.btnExport.Click += new System.EventHandler(this.BtnExport_Click);
             // 
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.chkAllRadios);
             this.groupBox1.Controls.Add(this.chkListRadios);
+            this.groupBox1.ForeColor = System.Drawing.Color.White;
             this.groupBox1.Location = new System.Drawing.Point(388, 12);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(250, 244);
@@ -200,12 +206,14 @@ namespace CCS7Manager
             // 
             // btnOutputFolder
             // 
+            this.btnOutputFolder.BackColor = System.Drawing.Color.DodgerBlue;
+            this.btnOutputFolder.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnOutputFolder.Location = new System.Drawing.Point(388, 294);
             this.btnOutputFolder.Name = "btnOutputFolder";
             this.btnOutputFolder.Size = new System.Drawing.Size(87, 23);
             this.btnOutputFolder.TabIndex = 10;
             this.btnOutputFolder.Text = "Output Folder";
-            this.btnOutputFolder.UseVisualStyleBackColor = true;
+            this.btnOutputFolder.UseVisualStyleBackColor = false;
             this.btnOutputFolder.Click += new System.EventHandler(this.BtnOutputFolder_Click);
             // 
             // tb_OutputFolder
@@ -222,12 +230,26 @@ namespace CCS7Manager
             this.groupBox3.Controls.Add(this.cbDatabaseList);
             this.groupBox3.Controls.Add(this.btnOpenJSON);
             this.groupBox3.Controls.Add(this.btnImportWeb);
+            this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.groupBox3.ForeColor = System.Drawing.Color.White;
             this.groupBox3.Location = new System.Drawing.Point(12, 256);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(308, 104);
             this.groupBox3.TabIndex = 13;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Database ";
+            // 
+            // btnEditList
+            // 
+            this.btnEditList.BackColor = System.Drawing.Color.DodgerBlue;
+            this.btnEditList.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnEditList.Location = new System.Drawing.Point(229, 20);
+            this.btnEditList.Name = "btnEditList";
+            this.btnEditList.Size = new System.Drawing.Size(70, 23);
+            this.btnEditList.TabIndex = 15;
+            this.btnEditList.Text = "Manage";
+            this.btnEditList.UseVisualStyleBackColor = false;
+            this.btnEditList.Click += new System.EventHandler(this.btnEditList_Click);
             // 
             // cbDatabaseList
             // 
@@ -239,39 +261,34 @@ namespace CCS7Manager
             // 
             // btnOpenJSON
             // 
+            this.btnOpenJSON.BackColor = System.Drawing.Color.DodgerBlue;
+            this.btnOpenJSON.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnOpenJSON.Location = new System.Drawing.Point(9, 57);
             this.btnOpenJSON.Name = "btnOpenJSON";
             this.btnOpenJSON.Size = new System.Drawing.Size(98, 23);
             this.btnOpenJSON.TabIndex = 13;
             this.btnOpenJSON.Text = "Open JSON";
-            this.btnOpenJSON.UseVisualStyleBackColor = true;
+            this.btnOpenJSON.UseVisualStyleBackColor = false;
             this.btnOpenJSON.Click += new System.EventHandler(this.BtnOpenJSON_Click);
             // 
             // btnSaveJSON
             // 
+            this.btnSaveJSON.BackColor = System.Drawing.Color.DodgerBlue;
             this.btnSaveJSON.Enabled = false;
+            this.btnSaveJSON.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnSaveJSON.Location = new System.Drawing.Point(481, 265);
             this.btnSaveJSON.Name = "btnSaveJSON";
             this.btnSaveJSON.Size = new System.Drawing.Size(87, 23);
             this.btnSaveJSON.TabIndex = 14;
             this.btnSaveJSON.Text = "Export JSON";
-            this.btnSaveJSON.UseVisualStyleBackColor = true;
+            this.btnSaveJSON.UseVisualStyleBackColor = false;
             this.btnSaveJSON.Click += new System.EventHandler(this.btnSaveJSON_Click);
-            // 
-            // btnEditList
-            // 
-            this.btnEditList.Location = new System.Drawing.Point(229, 20);
-            this.btnEditList.Name = "btnEditList";
-            this.btnEditList.Size = new System.Drawing.Size(70, 23);
-            this.btnEditList.TabIndex = 15;
-            this.btnEditList.Text = "Manage";
-            this.btnEditList.UseVisualStyleBackColor = true;
-            this.btnEditList.Click += new System.EventHandler(this.button1_Click);
             // 
             // frmPrincipal
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.DimGray;
             this.ClientSize = new System.Drawing.Size(650, 393);
             this.Controls.Add(this.btnSaveJSON);
             this.Controls.Add(this.groupBox3);
@@ -281,6 +298,7 @@ namespace CCS7Manager
             this.Controls.Add(this.btnExport);
             this.Controls.Add(this.stBar);
             this.Controls.Add(this.groupBox2);
+            this.ForeColor = System.Drawing.Color.White;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;

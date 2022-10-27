@@ -1,21 +1,25 @@
 ChangeLog:
 
-1.0.0 : Initial Creation
+1.3.0 : Add Dialog Box to manage Source List for CCS7 database
 
-1.0.1 : Countries Alias correction
+1.2.0 : Update radioid changes
 
-1.0.2 : Add Baofeng support
-
-1.0.3 : Add retentive countries filter
-
-1.0.4 : Update download contact source
-
-1.0.5 : Add Multi source ID list and DVPI export
-
-1.0.6 : Bug correction on shield network CCS7 id database
-
-1.0.7 : Add Pi-Star export to .dat file
+1.1.0 : Replace json cache by sqlite database. Can merge severals databases.
 
 1.0.8 : Bug fixe on CSV export
 
-1.1.0 : Replace json cache by sqlite database. Can merge severals databases.
+1.0.7 : Add Pi-Star export to .dat file
+
+1.0.6 : Bug correction on shield network CCS7 id database
+
+1.0.5 : Add Multi source ID list and DVPI export
+
+1.0.4 : Update download contact source
+
+1.0.3 : Add retentive countries filter
+
+1.0.2 : Add Baofeng support
+
+1.0.1 : Countries Alias correction
+
+1.0.0 : Initial Creation

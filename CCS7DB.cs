@@ -27,6 +27,8 @@ using System.IO;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Collections;
+using System.Security.Cryptography;
 
 namespace CCS7Manager
 {
@@ -83,6 +85,7 @@ namespace CCS7Manager
 				cmd = m_DB.CreateCommand();
 				cmd.CommandType = CommandType.Text;
 				cmd.CommandText = "SELECT name FROM sqlite_master WHERE type='table' AND name='sources';";
+				r.Close();
 				r = cmd.ExecuteReader();
 				if (r.StepCount < 1)
 				{
@@ -94,7 +97,10 @@ namespace CCS7Manager
 
 					AddSource("RadioID", "Official DMR id from RA community", "https://database.radioid.net/static/users.json");
 					AddSource("RadioShack", "French Amator Radio Database", "http://radioshack.ovh:85/downloads/local_subscriber_ids.json");
+					cmd.Dispose();
 				}
+				r.Close();
+				cmd.Dispose();
 				m_Initialized = true;
 				return;
 			}
@@ -129,6 +135,7 @@ namespace CCS7Manager
 				cmd.Parameters.Add(sDescription);
 				cmd.Parameters.Add(sURL);
 				cmd.ExecuteNonQuery();
+				cmd.Dispose();
 				return true;
 
 			}
@@ -163,7 +170,9 @@ namespace CCS7Manager
 					{
 						List.Add(r.GetString(1), r.GetString(3));
 					}
-				}
+					r.Close();
+                    cmd.Dispose();
+                }
 			}
 			catch (Exception e)
 			{
@@ -173,6 +182,32 @@ namespace CCS7Manager
 			}
 			return List;
 		}
+
+		public void UpdateSourceList(StringDictionary pList)
+		{
+			if (pList.Count == 0) return;
+			try
+			{
+				if (m_DB != null)
+				{
+					SQLiteCommand cmd = m_DB.CreateCommand();
+					cmd.CommandType = CommandType.Text;
+					cmd.CommandText = "DELETE FROM sources;";
+					cmd.ExecuteNonQuery();
+					foreach (DictionaryEntry item in pList)
+					{
+						AddSource(item.Key.ToString(), "", item.Value.ToString());
+					}
+                    cmd.Dispose();
+                }
+			}
+			catch (Exception e)
+			{
+#if DEBUG
+				MessageBox.Show(e.Message);
+#endif
+			}
+        }
 
 		public User GetUser(int pId)
 		{
@@ -202,7 +237,9 @@ namespace CCS7Manager
 						pUser.State = r.GetString(6);
 						pUser.Surname = r.GetString(7);
 					}
-				}
+					r.Close();
+                    cmd.Dispose();
+                }
 
 			}
 			catch (Exception e)
@@ -241,7 +278,9 @@ namespace CCS7Manager
 							};
 							pList.Add(u);
 						}
+						rdr.Close();
 					}
+					cmd.Dispose();
 				}
 			}
 			catch (Exception e)
@@ -341,6 +380,7 @@ namespace CCS7Manager
 						{
 							pList.Add(Convert.ToString(rdr["Country"]));
 						}
+						rdr.Close();
 					}
 				}
 			}
@@ -356,6 +396,7 @@ namespace CCS7Manager
 
 		public int GetCountryNumber(string pCountry)
 		{
+			int Result;
 			try
 			{
 				if (m_DB != null)
@@ -364,7 +405,9 @@ namespace CCS7Manager
 					cmd.CommandType = CommandType.Text;
 					cmd.CommandText = "SELECT COUNT(*) FROM ccs7id WHERE Country = @Country;";
 					cmd.Parameters.AddWithValue("@Country", pCountry);
-					return Convert.ToInt32(cmd.ExecuteScalar());
+                    Result = Convert.ToInt32(cmd.ExecuteScalar());
+					cmd.Dispose();
+                    return Result;
 				}
 
 			}
@@ -407,7 +450,9 @@ namespace CCS7Manager
 							};
 							pList.Add(u);
 						}
+						rdr.Close();
 					}
+					cmd.Dispose();
 				}
 
 			}

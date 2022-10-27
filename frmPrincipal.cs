@@ -47,7 +47,7 @@ namespace CCS7Manager
     /// </summary>
     public partial class frmPrincipal : Form
     {
-        private readonly StringDictionary DBList;
+        private StringDictionary DBList;
 
         private readonly CCS7DB m_DB;
 
@@ -880,11 +880,13 @@ namespace CCS7Manager
             UpdateContactSelected();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnEditList_Click(object sender, EventArgs e)
         {
             DialogResult Result;
             dlgConServeur DatabaseLst = new dlgConServeur();
             Result = DatabaseLst.ShowDialog();
+            DBList = m_DB.GetSourceList();
+            cbDatabaseList.DataSource = new BindingSource(DBList, null);
         }
     }
 }
