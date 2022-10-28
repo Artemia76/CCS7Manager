@@ -400,7 +400,7 @@ namespace CCS7Manager
                             FName = (string)o["fname"],
                             Callsign = (string)o["callsign"],
                             City = (string)o["city"],
-                            RadioID = (int)o["id"],
+                            Radio_ID = (int)o["radio_id"],
                             Country = (string)o["country"],
                             Remarks = (string)o["remarks"],
                             Surname = (string)o["surname"],
@@ -600,7 +600,7 @@ namespace CCS7Manager
         private string GetRadioPattern(int pNum, RadioType pRadio, User pUser)
         {
             string Pattern="";
-            string radio_id = Sanity(pUser.RadioID.ToString());
+            string radio_id = Sanity(pUser.Radio_ID.ToString());
             string callsign = Sanity(pUser.Callsign);
             string fname = Sanity(pUser.FName);
             string surname = Sanity(pUser.Surname);

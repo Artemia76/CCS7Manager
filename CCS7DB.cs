@@ -177,7 +177,7 @@ namespace CCS7Manager
 		{
 			User pUser = new User
 			{
-				RadioID = -1
+				Radio_ID = -1
 			};
 			try
 			{
@@ -192,7 +192,7 @@ namespace CCS7Manager
 					if (r.StepCount > 0)
 					{
 						r.Read();
-						pUser.RadioID = r.GetInt32(0);
+						pUser.Radio_ID = r.GetInt32(0);
 						pUser.Callsign = r.GetString(1);
 						pUser.City = r.GetString(2);
 						pUser.Country = r.GetString(3);
@@ -229,7 +229,7 @@ namespace CCS7Manager
 						{
 							User u = new User
 							{
-								RadioID = Convert.ToInt32(rdr["Id"]),
+								Radio_ID = Convert.ToInt32(rdr["Id"]),
 								Callsign = Convert.ToString(rdr["Callsign"]),
 								City = Convert.ToString(rdr["City"]),
 								Country = Convert.ToString(rdr["Country"]),
@@ -293,7 +293,7 @@ namespace CCS7Manager
 				cmd.Parameters.AddWithValue("@Surname", "");
 				foreach (User u in pUserList.users)
 				{
-					cmd.Parameters["@ID"].Value = u.RadioID;
+					cmd.Parameters["@ID"].Value = u.Radio_ID;
 					cmd.Parameters["@Callsign"].Value = u.Callsign;
 					cmd.Parameters["@City"].Value = u.City;
 					cmd.Parameters["@Country"].Value = u.Country;
@@ -395,7 +395,7 @@ namespace CCS7Manager
 							{
 
 
-								RadioID = Convert.ToInt32(rdr["Id"]),
+								Radio_ID = Convert.ToInt32(rdr["Id"]),
 								Callsign = Convert.ToString(rdr["Callsign"]),
 								City = Convert.ToString(rdr["City"]),
 								Country = Convert.ToString(rdr["Country"]),

@@ -19,3 +19,5 @@ ChangeLog:
 1.0.8 : Bug fixe on CSV export
 
 1.1.0 : Replace json cache by sqlite database. Can merge severals databases.
+
+1.1.1 : Add new field from radio_id
