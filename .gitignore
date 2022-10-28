@@ -51,6 +51,7 @@ build/
 *.old
 *.db
 *.smproj
+*.bak
 
 # Visual C++ cache files
 ipch/
@@ -162,3 +163,4 @@ $RECYCLE.BIN/
 .DS_Store
 packages
 /.vs
+/dlgConServeur.resx
