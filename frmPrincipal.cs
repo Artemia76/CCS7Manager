@@ -47,7 +47,7 @@ namespace CCS7Manager
     /// </summary>
     public partial class frmPrincipal : Form
     {
-        private readonly StringDictionary DBList;
+        private StringDictionary DBList;
 
         private readonly CCS7DB m_DB;
 
@@ -329,7 +329,6 @@ namespace CCS7Manager
             {
                 using (WebClient webClient = new WebClient())
                 {
-                    //Uri uri = new Uri("https://database.radioid.net/static/users.json");
                     Uri uri = new Uri((string)cbDatabaseList.SelectedValue);
                     tsState.Text = "USER LIST DOWNLOAD STARTING...";
                     ServicePointManager.Expect100Continue = true;
@@ -382,7 +381,28 @@ namespace CCS7Manager
                 //if it standard Serialized JSON from this app
                 if (pJSONContent.StartsWith("{\"users\":[{"))
                 {
-                    ul = JsonConvert.DeserializeObject<UserList>(pJSONContent);
+                    ul = new UserList
+                    {
+                        users = new List<User>()
+                    };
+                    JObject jo = JObject.Parse(pJSONContent);
+                    JArray ja = (JArray)jo["users"];
+                    foreach (JObject o in ja)
+                    {
+                        User u = new User
+                        {
+                            FName = (string)o["fname"],
+                            Callsign = (string)o["callsign"],
+                            City = (string)o["city"],
+                            RadioID = (int)o["id"],
+                            Country = (string)o["country"],
+                            Remarks = (string)o["remarks"],
+                            Surname = (string)o["surname"],
+                            State = (string)o["state"]
+                        };
+                        if (u.Country.Length > 0)
+                            ul.users.Add(u);
+                    }
                 }
                 // Else we need to parse the unknown Json Format
                 else
@@ -858,6 +878,15 @@ namespace CCS7Manager
                 this.chkBoxCountries.Enabled = true;
             }
             UpdateContactSelected();
+        }
+
+        private void btnEditList_Click(object sender, EventArgs e)
+        {
+            DialogResult Result;
+            dlgConServeur DatabaseLst = new dlgConServeur();
+            Result = DatabaseLst.ShowDialog();
+            DBList = m_DB.GetSourceList();
+            cbDatabaseList.DataSource = new BindingSource(DBList, null);
         }
     }
 }
