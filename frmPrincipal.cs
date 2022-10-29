@@ -420,7 +420,7 @@ namespace CCS7Manager
                             FName = (string)o["fname"],
                             Callsign = (string)o["callsign"],
                             City = (string)o["city"],
-                            Radio_ID = (int)o["radio_id"],
+                            RadioID = (int)o["id"],
                             Country = (string)o["country"],
                             Remarks = (string)o["remarks"],
                             Surname = (string)o["surname"],
@@ -546,12 +546,13 @@ namespace CCS7Manager
                 if (!fileInfo.Directory.Exists)
                     fileInfo.Directory.Create();
                 FileStream fileStream = new FileStream(file, FileMode.Create, FileAccess.Write);
-                StreamWriter streamWriter = new StreamWriter(fileStream, Encoding.UTF8);
+                Encoding utf8WithoutBom = new UTF8Encoding(false);
+                StreamWriter streamWriter = new StreamWriter(fileStream, utf8WithoutBom);
                 tsState.Text = "GENERATING " + pRadio.ToString() + " FILE";
                 switch (pRadio)
                 {
                     case RadioType.AnyTone:
-                        streamWriter.WriteLine("No.,Radio ID,Callsign,Name,City,State,Country,Remarks,Call Type,Call Alert");
+                        streamWriter.WriteLine("Radio ID,Callsign,Name,City,State,Country,Remarks,");
                         break;
                     case RadioType.GD77:
                         streamWriter.WriteLine("Radio ID,Callsign,Name,NickName,City,State,Country,Remarks<br/>");
@@ -620,7 +621,7 @@ namespace CCS7Manager
         private string GetRadioPattern(int pNum, RadioType pRadio, User pUser)
         {
             string Pattern="";
-            string radio_id = Sanity(pUser.Radio_ID.ToString());
+            string radio_id = Sanity(pUser.RadioID.ToString());
             string callsign = Sanity(pUser.Callsign);
             string fname = Sanity(pUser.FName);
             string surname = Sanity(pUser.Surname);
@@ -631,7 +632,7 @@ namespace CCS7Manager
             switch (pRadio)
             {
                 case RadioType.AnyTone:
-                    Pattern = pNum.ToString() + "," + radio_id + "," + callsign + "," + fname + " " + surname + "," + city + "," + state + "," + country + "," + remarks + ",0,0,";
+                    Pattern = radio_id + "," + callsign + "," + fname + " " + surname + "," + city + "," + state + "," + country + "," + remarks +",";
                     break;
                 case RadioType.GD77:
                     Pattern = radio_id + "," + callsign + "," + fname + " " + surname + "," + "," + city + "," + state + "," + country + "," + "<br/>";
