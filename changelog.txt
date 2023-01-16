@@ -1,5 +1,7 @@
 ChangeLog:
 
+1.3.2 : Change default URL for radioshack database
+
 1.3.0 : Add Dialog Box to manage Source List for CCS7 database
 
 1.2.0 : Update radioid changes

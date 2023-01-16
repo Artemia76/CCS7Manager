@@ -96,7 +96,7 @@ namespace CCS7Manager
 					cmd.ExecuteNonQuery();
 
 					AddSource("RadioID", "Official DMR id from RA community", "https://database.radioid.net/static/users.json");
-					AddSource("RadioShack", "French Amator Radio Database", "http://radioshack.ovh:85/downloads/local_subscriber_ids.json");
+					AddSource("RadioShack", "French Amator Radio Database", "https://raw.githubusercontent.com/airphel/HBJson-HostFiles/main/local_subscriber_ids.json");
 					cmd.Dispose();
 				}
 				r.Close();
