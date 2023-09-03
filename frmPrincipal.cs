@@ -138,7 +138,7 @@ namespace CCS7Manager
 
             }
             tb_OutputFolder.Text = Settings.Default.OutputFolder;
-
+            Text = "CCS7Manager v" + Application.ProductVersion + " by F4IKZ";
             windowInitialized = true;
         }
 

@@ -53,7 +53,8 @@ build/
 *.db
 *.smproj
 *.bak
-
+#Studio Code
+.vs*/
 # Visual C++ cache files
 ipch/
 *.aps
